@@ -1,25 +1,23 @@
-from PIL import Image, ImageDraw
-import numpy as np
-from mtcnn.mtcnn import MTCNN
-from keras.models import load_model
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
-import mmcv
 import cv2
-import math
+import matplotlib.pyplot as plt
+import mmcv
+import numpy as np
+from keras.models import load_model
+from mtcnn.mtcnn import MTCNN
+from PIL import Image, ImageDraw
 
 
+#Load the FAcenet Model
 def model_load():
-    loaded_model = load_model('facenet_keras.h5')
-    return loaded_model
+    return load_model('facenet_keras.h5')
 
-
+#Compute the difference
 def difference_image(image_array1, image_array2):
     difference = abs(image_array1 - image_array2)
     print((difference.sum()/80)**2)
     return (difference.sum()/80)**2
 
-
+#Extract face embeddings
 def embedding_extractors(faces, model):
     face_embeddings = []
     for i in range(len(faces)):
@@ -32,12 +30,11 @@ def embedding_extractors(faces, model):
     return face_embeddings
 
 
-def extract_face_multiple(fileName):  # for multiple person image
+def extract_face_multiple(fileName,detector):  # for multiple person image
     faces = []
     image = Image.open(fileName)
     image = image.convert('RGB')
     pixels = np.asarray(image)
-    detector = MTCNN()
     pixel = detector.detect_faces(pixels)
     # print(pixel)
     for i in range(len(pixel)):
@@ -67,7 +64,7 @@ def embedding_extractor(fileName, model):  # for single person image testing
     embedding = model.predict(samples)
     return embedding[0]
 
-
+#Extract Face
 def Extract_faces(pixels, pixel, i):
     bgcolor = [255, 255, 255]
     x1, y1, width, height = pixel[i]['box']
@@ -83,14 +80,15 @@ def Extract_faces(pixels, pixel, i):
 
 
 model = model_load()
-image = Image.open('test_image8.jpg')
+detector = MTCNN()
+image = Image.open('test_image11.jpg')
 image.convert('RGB')
-data = plt.imread('test_image8.jpg')
-# plt.imshow(data)
-ax = plt.gca()
-face = extract_face_multiple('test_image8.jpg')
+# data = plt.imread('test_image8.jpg')
+# # plt.imshow(data)
+# ax = plt.gca()
+face = extract_face_multiple('test_image11.jpg',detector=detector)
 embedded_face = embedding_extractors(face[0], model)
-target_embedding = embedding_extractor('test_image12.jpg', model)
+target_embedding = embedding_extractor('test_image10.jpg', model)
 min_distance = np.inf
 selected_index = -1
 for i in range(len(embedded_face)):
@@ -106,10 +104,10 @@ if selected_index != -1:
     x1, y1 = abs(x1), abs(y1)
     x2,y2 = x1+width,y1+height
     img1.rectangle([(x1,y1),(x2,y2)], outline=(255, 0, 0), width=3)
-    image.show()
-    # x1, y1 = abs(x1), abs(y1)
-    # rect = Rectangle((x1,y1-5),width+20,height+10,color ='orange' ,fill = False)
-    # ax.add_patch(rect)
-    # plt.show()
+    image.show() 
 else:
     print('NO FACE MATCHED')
+# x1, y1 = abs(x1), abs(y1)
+# rect = Rectangle((x1,y1-5),width+20,height+10,color ='orange' ,fill = False)
+# ax.add_patch(rect)
+# plt.show()

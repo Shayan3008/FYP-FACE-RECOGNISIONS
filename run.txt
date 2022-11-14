@@ -2,4 +2,5 @@ C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/face.py
 C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/secondFace.py
 C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/facenet.py
 C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/finalFacenet.py
+C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/facevideo.py
 GIT
