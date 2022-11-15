@@ -82,7 +82,7 @@ def extract_face_multiple(frame,detector):  # for multiple person image
     return (faces, pixel)
 
 def play_video(fileName,detector,target_embedding):
-    cap = cv2.VideoCapture('video1.mp4')
+    cap = cv2.VideoCapture('images/video1.mp4')
     video = []
  
 # Check if camera opened successfully
@@ -114,8 +114,10 @@ def play_video(fileName,detector,target_embedding):
                     x1, y1 = abs(x1), abs(y1)
                     x2,y2 = x1+width,y1+height
                     img1.rectangle([(x1,y1),(x2,y2)], outline=(255, 0, 0), width=8)
-                    image.show()
-                    video.append(np.array(image))
+                    # image.show()
+                    array = np.array(image)
+                    cv_array = cv2.cvtColor(array,cv2.COLOR_RGB2BGR)
+                    video.append(cv_array)
                 # break
                 
                 
@@ -124,7 +126,7 @@ def play_video(fileName,detector,target_embedding):
                 break
     for i in range(len(video)):
         try:
-            cv2.imshow('Frame',video[i])
+            
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
@@ -138,6 +140,6 @@ def play_video(fileName,detector,target_embedding):
     cv2.destroyAllWindows()
 model = model_load()
 detector = MTCNN()
-input_embedding =  embedding_extractor('test_0.jpg', model)
+input_embedding =  embedding_extractor('images/test_0.jpg', model)
 # print(input_embedding)
 play_video('',detector,input_embedding)
