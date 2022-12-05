@@ -3,4 +3,6 @@ C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/secondFa
 C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/facenet.py
 C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/finalFacenet.py
 C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/facevideo.py
+C:/Users/DELL/anaconda3/envs/MTCNN/python.exe c:/Users/DELL/Desktop/IPT/Gait/countor.py
+C:\Users\DELL\Desktop\IPT\Gait\Images\countor.py
 GIT
