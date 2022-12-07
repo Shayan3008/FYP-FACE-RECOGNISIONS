@@ -18,6 +18,7 @@ from django.urls import path, include
 from survallence import views
 
 urlpatterns = [
-    path("", view=views.index , name="survallence"),
+    path("", view=views.index, name="survallence"),
+    path("video/", view=views.video, name="video")
 
 ]

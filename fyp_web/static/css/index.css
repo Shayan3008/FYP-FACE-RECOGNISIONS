@@ -1,0 +1,14 @@
+* ,body{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.cameras{
+    height: 40vh;
+}
+
+.cameras video{
+    height: 100%;
+    width: 100%;
+}
