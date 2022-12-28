@@ -13,9 +13,14 @@
 
 <body>
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="container text-center hidden">
+            <input type="file" class="file" name="file" />
+            <button class="btn btn-primary click">Submit</button>
+        </div>
+
+        <div class="row justify-content-center videoPanel" style="display: none;">
             <div class="col-5 cameras p-4 video1">
-                <video src="/static/video1.mp4" class="img" controls >
+                <video src="/static/project.avi" class="img" type="video/mp4;" controls>
             </div>
             <div class="col-5 cameras p-4">
                 <video src="/static/video1.mp4" controls>
@@ -29,7 +34,35 @@
         crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
-        function getCookie(name) {
+        const videos = document.querySelector(".videoPanel")
+        const file = document.querySelector(".file")
+        const hidden = document.querySelector(".hidden")
+        document.querySelector(".click").onclick = (e) => {
+            if (file.files.length > 0) {
+                const form = new FormData()
+                form.append("input", file.files[0])
+                $.ajax(
+                    {
+                        url: "/survallence/image/",
+                        type: "POST",
+                        data: form,
+                        headers: {
+                            "X-CSRFToken": getCookie("csrftoken"),
+                        },
+                        contentType: false,
+                        processData: false,
+                        success: function (getData) {
+                            console.log(getData)
+                            localStorage.setItem("input_path1", getData)
+                            videos.style.display = "flex"
+                            hidden.style.display = "none"
+                            sendVideoFromCamera("")
+                        }
+                    });
+
+            }
+        }
+        const getCookie = (name) => {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
@@ -53,22 +86,23 @@
             const form = new FormData()
             const file = await getVideoBlob()
             form.append("vid", file)
-            $.ajax(
-                {
-                    url: "/survallence/video/",
-                    type: "POST",
-                    data: form,
-                    headers: {
-                        "X-CSRFToken": getCookie("csrftoken"),
-                    },
-                    contentType: false,
-                    processData: false,
-                    success: function (getData) {
-                        console.log(getData)
-                    }
-                });
+            form.append("input",localStorage.getItem("input_path1"))
+            // $.ajax(
+            //     {
+            //         url: "/survallence/video/",
+            //         type: "POST",
+            //         data: form,
+            //         headers: {
+            //             "X-CSRFToken": getCookie("csrftoken"),
+            //         },
+            //         contentType: false,
+            //         processData: false,
+            //         success: function (getData) {
+            //             document.querySelector('.img').src = getData
+            //         }
+            //     });
         }
-        sendVideoFromCamera("")
+        
     </script>
 </body>
 

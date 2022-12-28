@@ -19,6 +19,7 @@ from survallence import views
 
 urlpatterns = [
     path("", view=views.index, name="survallence"),
-    path("video/", view=views.video, name="video")
+    path("video/", view=views.video, name="video"),
+    path("image/", view=views.input, name = "input")
 
 ]
