@@ -5,7 +5,8 @@ import 'package:fyp_app/interface/socketInterface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final String? user;
+  const HomeScreen({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     } // initialized Socket Class in the home
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Screen'),
+        title: Text(user!),
         centerTitle: true,
       ),
       body: SafeArea(
