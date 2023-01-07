@@ -6,10 +6,9 @@ from PIL import Image, ImageDraw
 
 
 class Face:
-    def __init__(self, input1):
+    def __init__(self):
         self.model = load_model("models/face/facenet_keras.h5")
         self.faceDetect = MTCNN()
-        self.inputImage = input1
 
     def difference_image(self, image_array1, image_array2):
         difference = abs(image_array1 - image_array2)
@@ -39,26 +38,31 @@ class Face:
             faces.append(self.Extract_faces(pixels, pixel, i))
         return (faces, pixel)
 
-    def extract_face2(self, fileName):  # for single person image
-        image = Image.open(fileName)
+    def extract_face2(self, image):  # for single person image
         image = image.convert('RGB')
         pixels = np.asarray(image)
         detector = MTCNN()
         pixel = detector.detect_faces(pixels)
-        # print(pixel)
+
+        print(pixel)
         for i in range(len(pixel)):
             return (self.Extract_faces(pixels, pixel, i))
             # face_array = asarray(image)
         return np.array([])
 
-    def embedding_extractor(self, fileName, model):  # for single person image testing
-        pixels = self.extract_face2(fileName)
+    def embedding_extractor(self, image, model):  # for single person image testing
+        pixels = self.extract_face2(image)
+        print(pixels)
         pixels = pixels.astype('float32')
         mean, std = pixels.mean(), pixels.std()
         pixels = (pixels-mean) / std
         samples = np.expand_dims(pixels, axis=0)
+        print(samples)
         embedding = model.predict(samples)
-        return embedding[0]
+        if len(embedding) < 0:
+            return 0
+        else:
+            return embedding[0]
 
     def Extract_faces(self, pixels, pixel, i):
         bgcolor = [255, 255, 255]
@@ -94,7 +98,6 @@ class Face:
             # Capture frame-by-frame
             ret, frame = cap.read()
             i = i+1
-            print(i)
             if i % 25 != 0:
                 if ret == True:
                     selected_index = -1
@@ -103,37 +106,39 @@ class Face:
                         frame, detector=self.faceDetect)
                     embedded_face = self.embedding_extractors(
                         face[0], self.model)
+                    print('EMBEDDING', len(embedded_face))
                     for i in range(len(embedded_face)):
                         dist = self.difference_image(
                             target_embedding, embedded_face[i])
-                        if dist < min_distance and dist < 1.3:
+                        print(dist)
+                        if dist < min_distance and dist < 1.5:
                             min_distance = dist
                             selected_index = i
-                    image = Image.fromarray(frame)
-                    img1 = ImageDraw.Draw(image)
-
+                    print('INDEX:', selected_index)
                     if selected_index != -1:
                         x1, y1, width, height = face[1][selected_index]['box']
                         x1, y1 = abs(x1), abs(y1)
                         x2, y2 = x1+width, y1+height
-                        img1.rectangle([(x1, y1), (x2, y2)],
-                                       outline=(255, 0, 0), width=8)
+                        cv2.rectangle(frame, (x1, y1), (x2, y2),
+                                      (0, 0, 255), 2)
                         # image.show()
                         array = np.array(image)
-                        cv_array = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
-                        video.append(cv_array)
+                        # cv_array = cv2.cvtColor(array, cv2.COLOR_RGB2BGR)
+                    image = cv2.resize(frame, (1280, 720))
+                    video.append(image)
                     # break
 
                 # Break the loop
                 else:
                     break
-        height, width, layer = video[0].shape
-        shapes = (width, height)
-        out = cv2.VideoWriter(
-            'static/project.mp4', cv2.VideoWriter_fourcc(*'DIVX'), 15, shapes)
-        for i in range(len(video)):
-            out.write(video[i])
-        out.release()
+        if len(video) > 0:
+            height, width, layer = video[0].shape
+            shapes = (width, height)
+            out = cv2.VideoWriter(
+                'static/project.mp4', cv2.VideoWriter_fourcc(*'H264'), 15, shapes)
+            for i in range(len(video)):
+                out.write(video[i])
+            out.release()
         return '/static/project.mp4'
     # model = model_load()
     # detector = MTCNN

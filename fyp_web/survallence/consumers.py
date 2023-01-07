@@ -26,9 +26,18 @@ class CameraConsumer(WebsocketConsumer):
         )
 
     def receive(self, text_data):
-        print(text_data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                "type": "Alert_Generate",
+                "msg": text_data
+            }
+        )
+
+    def Alert_Generate(self, event):
+        message = event["msg"]
         self.send(json.dumps({
-            "type": "Connection establish",
-            "msg": text_data
+            "type": "Alert",
+            "msg": message
         }))
         # text_data_json = json.loads(text_data)

@@ -31,7 +31,7 @@ class SIGNUPScreen extends StatelessWidget {
                 ),
                 SizedBox(
                   height: size.height * 0.3,
-                  child: Image.asset('tracking.jpg'),
+                  child: Image.asset('assets/tracking.jpg'),
                 ),
                 FractionallySizedBox(
                   widthFactor: 1.0,

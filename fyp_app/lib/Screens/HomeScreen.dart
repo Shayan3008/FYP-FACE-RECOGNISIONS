@@ -1,5 +1,6 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:fyp_app/Apis/sockets/AppSocket.dart';
 import 'package:fyp_app/Apis/sockets/sockets.dart';
 import 'package:fyp_app/interface/socketInterface.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -11,9 +12,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SocketInterface? socket;
-    if (kIsWeb) {
-      socket = SocketClass('25');
-    } // initialized Socket Class in the home
+    socket = SocketClass();
+    // initialized Socket Class in the home
     return Scaffold(
       appBar: AppBar(
         title: Text(user!),
@@ -21,11 +21,21 @@ class HomeScreen extends StatelessWidget {
       ),
       body: SafeArea(
           child: Center(
-        child: MaterialButton(
-          onPressed: (() => {socket!.printSocketName()}),
-          color: Colors.blue,
-          hoverColor: Colors.red,
-          child: const Text('Press This Button'),
+        child: GestureDetector(
+          onTap: (() => {
+                socket!.printSocketName(),
+              }),
+          child: const CircleAvatar(
+            radius: 120,
+            backgroundColor: Colors.red,
+            child: Text(
+              'Generate Alert',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ),
       )),
     );
