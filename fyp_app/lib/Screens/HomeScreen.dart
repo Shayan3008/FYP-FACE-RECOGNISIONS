@@ -1,9 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:fyp_app/Apis/sockets/AppSocket.dart';
-import 'package:fyp_app/Apis/sockets/sockets.dart';
 import 'package:fyp_app/interface/socketInterface.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class HomeScreen extends StatelessWidget {
   final String? user;
