@@ -1,11 +1,50 @@
 // ignore: file_names
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:fyp_app/Apis/sockets/AppSocket.dart';
 import 'package:fyp_app/interface/socketInterface.dart';
+import 'package:location/location.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final String? user;
+
   const HomeScreen({super.key, this.user});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final _location = Location();
+  PermissionStatus? permissionStatus;
+  LocationData? locationData;
+  Future<void> getPermission() async {
+    bool serviceEnabled;
+    serviceEnabled = await _location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await _location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionStatus = await _location.hasPermission();
+    if (permissionStatus == PermissionStatus.denied) {
+      permissionStatus = await _location.requestPermission();
+      if (permissionStatus != PermissionStatus.granted) {
+        return;
+      }
+    }
+    return;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getPermission().then((value) => {print(permissionStatus)});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +53,7 @@ class HomeScreen extends StatelessWidget {
     // initialized Socket Class in the home
     return Scaffold(
       appBar: AppBar(
-        title: Text(user!),
+        title: Text(widget.user!),
         centerTitle: true,
       ),
       body: SafeArea(
