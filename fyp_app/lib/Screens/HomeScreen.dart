@@ -1,5 +1,4 @@
 // ignore: file_names
-import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:fyp_app/Apis/sockets/AppSocket.dart';
@@ -43,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getPermission().then((value) => {print(permissionStatus)});
+    getPermission().then((value) => {});
   }
 
   @override
@@ -59,8 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
           child: Center(
         child: GestureDetector(
-          onTap: (() => {
-                socket!.printSocketName(),
+          onTap: (() async => {
+                if (permissionStatus == PermissionStatus.granted)
+                  {
+                    locationData = await _location.getLocation(),
+                    print(locationData)
+                  }
+                // socket!.printSocketName(),
               }),
           child: const CircleAvatar(
             radius: 120,
