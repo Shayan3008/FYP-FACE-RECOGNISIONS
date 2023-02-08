@@ -45,6 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
     getPermission().then((value) => {});
   }
 
+  Future<void> openGoogleLocation() async {
+    if (permissionStatus == PermissionStatus.granted) {
+      locationData = await _location.getLocation();
+      Uri url = Uri.parse(
+          'https://www.google.com/maps/search/?api=1&query=${locationData!.latitude},${locationData!.longitude}');
+      await launchUrl(url);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SocketInterface? socket;
@@ -59,11 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Center(
         child: GestureDetector(
           onTap: (() async => {
-                if (permissionStatus == PermissionStatus.granted)
-                  {
-                    locationData = await _location.getLocation(),
-                    print(locationData)
-                  }
+                await openGoogleLocation(),
                 // socket!.printSocketName(),
               }),
           child: const CircleAvatar(
