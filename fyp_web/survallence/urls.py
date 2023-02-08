@@ -20,6 +20,6 @@ from survallence import views
 urlpatterns = [
     path("", view=views.index, name="survallence"),
     path("video/", view=views.video, name="video"),
-    path("image/", view=views.input, name = "input")
-
+    path("image/", view=views.input, name="input"),  # POST IMAGES INPUT
+    path("face/", view=views.face, name="input")
 ]
