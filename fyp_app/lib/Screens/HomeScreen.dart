@@ -51,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Uri url = Uri.parse(
           'https://www.google.com/maps/search/?api=1&query=${locationData!.latitude},${locationData!.longitude}');
       await launchUrl(url);
+    } else {
+      getPermission();
     }
   }
 
