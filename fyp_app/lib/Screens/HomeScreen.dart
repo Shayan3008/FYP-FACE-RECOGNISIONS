@@ -1,4 +1,5 @@
 // ignore: file_names
+import 'package:fyp_app/models/Coordinates.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_app/Apis/sockets/AppSocket.dart';
@@ -15,6 +16,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Coordinates> list1 = [
+    Coordinates(lat: 24.954026378293587, long: 67.05843673597522),
+    Coordinates(lat: 24.946861240743132, long: 67.05332256849731)
+  ];
   final _location = Location();
   PermissionStatus? permissionStatus;
   LocationData? locationData;
@@ -48,9 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> openGoogleLocation() async {
     if (permissionStatus == PermissionStatus.granted) {
       locationData = await _location.getLocation();
-      Uri url = Uri.parse(
-          'https://www.google.com/maps/search/?api=1&query=${locationData!.latitude},${locationData!.longitude}');
-      await launchUrl(url);
+      Coordinates location = Coordinates(
+          long: locationData!.longitude, lat: locationData!.latitude);
+      int index = location.getClosestMap(list1);
     } else {
       getPermission();
     }

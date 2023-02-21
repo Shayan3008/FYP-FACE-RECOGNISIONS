@@ -2,6 +2,8 @@ from django.shortcuts import render, HttpResponse
 from models.face.face import Face
 from models.gait.gait import load_model
 from models.gait.gait import main
+from survallence.models import Coordinates
+import json
 # Create your views here.
 
 
@@ -41,3 +43,8 @@ def handleUploadFile(name, f):
 
 def face(request):
     return render(request, "admin/face.html")
+
+
+def postData(request):
+    print(list(Coordinates.objects.values_list()))
+    return HttpResponse(json.dumps(list(Coordinates.objects.values())))

@@ -21,5 +21,6 @@ urlpatterns = [
     path("", view=views.index, name="survallence"),
     path("video/", view=views.video, name="video"),
     path("image/", view=views.input, name="input"),  # POST IMAGES INPUT
-    path("face/", view=views.face, name="input")
+    path("face/", view=views.face, name="input"),
+    path("post/", view=views.postData, name="POST")
 ]
