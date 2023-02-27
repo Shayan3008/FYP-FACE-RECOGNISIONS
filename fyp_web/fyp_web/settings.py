@@ -31,6 +31,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "apis.apps.ApisConfig",
+    "cameras.apps.CamerasConfig",
+    "coordinates.apps.CoordinatesConfig",
+    "policemans.apps.PolicemansConfig",
     "survallence.apps.SurvallenceConfig",
     "django.contrib.admin",
     "django.contrib.auth",

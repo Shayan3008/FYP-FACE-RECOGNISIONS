@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from survallence import views
+from apis import views
 
 urlpatterns = [
-    path("coordinates/", view=views.GetCoordinates, name="Get Coordinates")
+    path("coordinates/", view=views.GetCoordinates, name="Get Coordinates"),
+    path("PostCoordinates/", view=views.PushTempData,name = "Push Temp Data")
 ]
