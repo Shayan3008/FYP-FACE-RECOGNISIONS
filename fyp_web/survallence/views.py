@@ -46,9 +46,10 @@ def face(request):
     return render(request, "admin/face.html")
 
 
-def postData(request): # function to push temperory data in db
+def postData(request):  # function to push temperory data in db
     print(list(Coordinates.objects.values_list()))
     return HttpResponse(json.dumps(list(Coordinates.objects.values())))
+
 
 def GetCoordinates(request):
     return HttpResponse(json.dumps(list(Coordinates.objects.values())))
