@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from survallence import views
+
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("survallence/", include("survallence.urls")),
-    path("apis/", include("apis.urls"))
+    path("coordinates/", view=views.GetCoordinates, name="Get Coordinates")
 ]

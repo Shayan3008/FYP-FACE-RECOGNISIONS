@@ -51,5 +51,4 @@ def postData(request):  # function to push temperory data in db
     return HttpResponse(json.dumps(list(Coordinates.objects.values())))
 
 
-def GetCoordinates(request):
-    return HttpResponse(json.dumps(list(Coordinates.objects.values())))
+
