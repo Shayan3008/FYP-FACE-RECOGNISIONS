@@ -3,6 +3,8 @@ from models.face.face import Face
 from models.gait.gait import load_model
 from models.gait.gait import main
 import json
+
+from shared.Shared_Methods import Shared_Methods
 # Create your views here.
 
 
@@ -30,16 +32,10 @@ def video(request):  # Function to Upload and give video input to Model
 
 def input(request):  # Helper function to save input file and respond files name
     fileName = "/static/input/" + request.FILES["input"].name
-    handleUploadFile("static/input/", request.FILES["input"])
+    # A helper class used to get multiple Shared Methods in a single class
+    sharedMethods = Shared_Methods()
+    sharedMethods.HandleUploadFile("static/input/", request.FILES["input"])
     return HttpResponse(fileName)
-
-
-def handleUploadFile(name, f):  # function to Save file sent from HTTP
-    with open(name + f.name, "wb+") as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-    return name+f.name
-
 
 def face(request):
     return render(request, "admin/face.html")

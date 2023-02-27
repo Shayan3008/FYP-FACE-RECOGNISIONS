@@ -3,13 +3,15 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from coordinates.models import Coordinates
+from shared.Shared_Methods import Shared_Methods
 
 
 # Create your views here.
 
 
 def GetCoordinates(request):
-    return HttpResponse(json.dumps(list(Coordinates.objects.values())))
+    sharedMethods = Shared_Methods()
+    return HttpResponse(sharedMethods.SendModelDataApiHelper(Coordinates))
 
 
 def PushTempData(request):
@@ -19,6 +21,5 @@ def PushTempData(request):
     ]
 
     for i in list1:
-        data1 = Coordinates(latitude = i["lat"],longitude = i["long"])
+        data1 = Coordinates(latitude=i["lat"], longitude=i["long"])
         data1.save()
-    
