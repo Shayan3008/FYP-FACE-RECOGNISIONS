@@ -7,7 +7,6 @@ class CameraConsumer(WebsocketConsumer):
 
     def connect(self):
         self.room_group_name = 'groupid'
-        print(self)
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -16,7 +15,8 @@ class CameraConsumer(WebsocketConsumer):
         self.accept()
         self.send(json.dumps({
             "type": "Connection establish",
-            "msg": "Congrats"
+            "msg": "Congrats",
+            "name": self.channel_name,
         }))
 
     def disconnect(self, code):
