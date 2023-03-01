@@ -20,9 +20,25 @@ class _HomeScreenState extends State<HomeScreen> {
     Coordinates(lat: 24.954026378293587, long: 67.05843673597522),
     Coordinates(lat: 24.946861240743132, long: 67.05332256849731)
   ];
+  SocketInterface? socket;
   final _location = Location();
   PermissionStatus? permissionStatus;
   LocationData? locationData;
+
+  @override
+  void initState() {
+    super.initState();
+    socket = SocketClass();
+
+    getPermission().then((value) => {});
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    socket!.dispose();
+  }
+
   Future<void> getPermission() async {
     bool serviceEnabled;
     serviceEnabled = await _location.serviceEnabled();
@@ -43,19 +59,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return;
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getPermission().then((value) => {});
-  }
-
+  //
   Future<void> openGoogleLocation() async {
     if (permissionStatus == PermissionStatus.granted) {
       locationData = await _location.getLocation();
       Coordinates location = Coordinates(
           long: locationData!.longitude, lat: locationData!.latitude);
+      List<Coordinates> list1 = await Coordinates.getCameraLocationsFromApis();
       int index = location.getClosestMap(list1);
+      socket!.sendSocketMessage(list1[index]);
     } else {
       getPermission();
     }
@@ -63,8 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SocketInterface? socket;
-    socket = SocketClass();
     // initialized Socket Class in the home
     return Scaffold(
       appBar: AppBar(
@@ -75,8 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Center(
         child: GestureDetector(
           onTap: (() async => {
-                await openGoogleLocation(),
+                // await openGoogleLocation(),
                 // socket!.printSocketName(),
+                await openGoogleLocation(),
               }),
           child: const CircleAvatar(
             radius: 120,
