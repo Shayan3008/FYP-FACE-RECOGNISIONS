@@ -52,15 +52,19 @@
     <div class="container">
         <div class="row justify-content-center videoPanel">
             <div class="camera1 col-5 cameras p-4 video1">
-                <video src="/static/test8.mp4" class="img" type="video/mp4;" controls>
+                <video src="/static/test6.mp4" class="img" type="video/mp4;" controls>
             </div>
-            <div class="2 col-5 cameras p-4">
-                <video src="/static/test6.mp4" controls>
+            <div class="camera2 col-5 cameras p-4">
+                <video src="/static/test8.mp4" controls>
             </div>
         </div>
-        <div class="container text-center hidden mt-3" >
+        <div class="container text-center hidden mt-3" style="display: none;">
             <input type="file" class="file" name="file" />
             <button class="btn btn-primary click">Submit</button>
+        </div>
+
+        <div class="container text-center mt-3">
+            <p class="text"></p>
         </div>
     </div>
 
@@ -69,12 +73,6 @@
         integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
         crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-        const socket = new WebSocket("ws://127.0.0.1:8000/ws/admin")
-        const videos = document.querySelector(".videoPanel")
-        const file = document.querySelector(".file")
-        const hidden = document.querySelector(".hidden")
-    </script>
     <script src="/static/js/main.js"></script>
     <script src="/static/js/network.js"></script>
     <script src="/static/js/socket.js"></script>

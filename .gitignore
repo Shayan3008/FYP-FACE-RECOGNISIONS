@@ -2,10 +2,5 @@ fyp_web/survallence/__pycache__/urls.cpython-37.pyc
 fyp_web/survallence/__pycache__/views.cpython-37.pyc
 **/__pycache__
 fyp_web/apis/__pycache__
-fyp_web/survallence/consumers.py
-fyp_web/survallence/__pycache__/consumers.cpython-37.pyc
-fyp_web/survallence/__pycache__/models.cpython-39.pyc
-fyp_web/survallence/__pycache__/urls.cpython-39.pyc
-fyp_web/survallence/__pycache__/views.cpython-39.pyc
-fyp_web/models/face/__pycache__/face.cpython-39.pyc
-fyp_web/apis/__pycache__/views.cpython-37.pyc
+fyp_web/survallence/__pycache__/
+fyp_web/apis/__pycache__/

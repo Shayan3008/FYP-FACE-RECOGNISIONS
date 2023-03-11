@@ -16,8 +16,7 @@ document.querySelector(".click").onclick = (e) => { //Send Input Image to Server
                 },
                 contentType: false,
                 processData: false,
-                success: function (getData) {
-                    console.log(getData)
+                success: (getData) => {
                     localStorage.setItem("input_path1", getData)
                     videos.style.display = "flex"
                     hidden.style.display = "none"
@@ -51,6 +50,8 @@ const getVideoBlob = async () => {
     const blob = await response.blob()
     return new File([blob], "video1.mp4", { type: "video/mp4" })
 }
+
+
 const sendVideoFromCamera = async (camera) => {
     const form = new FormData()
     const file = await getVideoBlob()
