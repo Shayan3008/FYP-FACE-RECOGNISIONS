@@ -18,6 +18,6 @@ from django.urls import path, include
 from apis import views
 
 urlpatterns = [
-    path("coordinates/", view=views.GetCoordinates, name="Get Coordinates"),
-    path("PostCoordinates/", view=views.PushTempData,name = "Push Temp Data")
+    path("coordinates/", view=views.getLocationWithCameraId, name="Get Coordinates"),
+    path("SendVideo/", view=views.SendVideo,name = "Download Video"),
 ]
