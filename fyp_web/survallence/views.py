@@ -39,3 +39,7 @@ def input(request):  # Helper function to save input file and respond files name
 
 def face(request):
     return render(request, "admin/face.html")
+
+
+def cookie(request):
+    return render(request,"admin/cookie.html")

@@ -22,6 +22,7 @@ urlpatterns = [
     path("video/", view=views.video, name="video"),
     path("image/", view=views.input, name="input"),  # POST IMAGES INPUT
     path("face/", view=views.face, name="input"),
+    path("cookie/",view = views.cookie, name = "csrftoken")
     # path("post/", view=views.postData, name="POST"),
     # path("coordinates/", view=views.GetCoordinates, name="Get Coordinates")
 ]

@@ -20,4 +20,13 @@ from apis import views
 urlpatterns = [
     path("coordinates/", view=views.getLocationWithCameraId, name="Get Coordinates"),
     path("SendVideo/", view=views.SendVideo,name = "Download Video"),
+    path("CheckData/",view=views.GetData,name="Check Data"),
+    path("AddCamera/",view = views.AddCamera, name = "Add Camera"),
+    path("UserSignup/", view=views.UserSignUp,name="user Signup"),
+    path("DeleteData/",view=views.DeleteData,name = "Delete Data",),
+    path("UserLogin/",view=views.UserLogin,name="Login User"),
+    path("AddPolice/",view=views.AddPoliceman,name = "Adding Policeman"),
+    path("AddCameraLinks/",view = views.AddCameraLinks, name = "Add Links"),
+    path("PoliceLogin/",view=views.PoliceLogin,name="Police Login"),
+    path("GetCookie/" ,view = views.GetCookie, name="Get Cookie")
 ]

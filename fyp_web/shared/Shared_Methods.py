@@ -1,6 +1,7 @@
 # A class which is used to keep all the shared procedures between the classes
 
 import json
+from django.http import HttpRequest
 
 
 class Shared_Methods:
@@ -17,3 +18,10 @@ class Shared_Methods:
     # input: Model => Object Model whose data is required.
     def SendModelDataApiHelper(self,Model):
         return json.dumps(list(Model.objects.values()))
+    
+    # function used as helper to delete rows from model.
+    # input: Model => Object Model whose data is required.
+
+    def DeleteModelDataApiHelper(self,Model):
+        Model.objects.all().delete()
+        return "Model Deleted!!!"

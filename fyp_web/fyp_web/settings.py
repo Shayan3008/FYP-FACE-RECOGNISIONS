@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "users.apps.UsersConfig",
+    "area.apps.AreaConfig",
     "apis.apps.ApisConfig",
     "cameras.apps.CamerasConfig",
     "coordinates.apps.CoordinatesConfig",
