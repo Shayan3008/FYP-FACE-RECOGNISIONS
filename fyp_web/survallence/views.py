@@ -1,4 +1,5 @@
 from django.shortcuts import render, HttpResponse
+from area.models import Area
 from models.face.face import Face
 from models.gait.gait import load_model
 from models.gait.gait import main
@@ -8,12 +9,16 @@ from shared.Shared_Methods import Shared_Methods
 # Create your views here.
 
 
+
+
+
 def index(request):  # Main WebPage Url
     # with open("static/project.mp4", "rb") as f:
     #     video = f.read()
     # with open("static/file.mp4", "wb+") as destination:
     #     destination.write(video)
-    return render(request, "admin/control.html")
+    context = {"list": list(Area.objects.values())}
+    return render(request, "admin/Forms/CameraForm.html",context=context)
 
 
 def video(request):  # Function to Upload and give video input to Model

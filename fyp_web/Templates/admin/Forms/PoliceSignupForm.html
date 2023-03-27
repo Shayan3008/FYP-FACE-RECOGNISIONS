@@ -1,0 +1,86 @@
+{% extends 'admin/Forms/base.html' %}
+{% block webtitle %}Police Signup Form{% endblock %}
+{% block MainTitle %}Police Signup Form{% endblock %}
+{% block inputs %}
+
+<form class="form">
+    <label for="username">email:</label>
+    <input type="text" id="username" name="username" placeholder="Enter username">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" placeholder="Enter password">
+    <label for="area-name">Area Name:</label>
+    <select id="area-Select" name="area-name">
+        {% for link in list %}
+        <option value={{link.id}}>{{link.Area_name}}</option>
+        {% endfor %}
+
+    </select>
+    <input class="submit_button" type="button" value="Login">
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+    
+    let select = document.querySelector("#area-Select")
+    let selectedValue = select.value
+    
+    select.onchange = (event) => {
+        selectedValue = event.target.value
+    }
+    const getCookie = (name) => {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    document.querySelector(".submit_button").addEventListener("click", async (e) => {
+        console.log("Hello")
+        let userName = document.querySelector("#username").value
+        let password = document.querySelector("#password").value
+        if (userName.length === 0 || password.length === 0){
+            console.log("Hello2")
+            return 
+        }
+        const response = await fetch("http://127.0.0.1:8000/apis/AddPolice/", {
+            method: "POST",
+            body: JSON.stringify({
+                "email":userName,
+                "password":password,
+                "area":selectedValue
+            }),
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        })
+        if (response.status === 200) {
+            // document.querySelector("#add-area").value = ""
+            window.location = "/survallence/"
+
+        }
+    })
+    {% comment %} fetch("http://127.0.0.1:8000/apis/SendVideo/", {
+        method: "POST",
+        body: JSON.stringify({
+            "FileName": "FinalGait.mp4",
+        }),
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+    })
+        .then(resp => resp.blob())
+        .then(resp => {
+            let file = new File([resp], "finalName.mp4")
+            console.log(file)
+        }) {% endcomment %}
+</script>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Add Area </title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #cfdddc;
+
+
+		}
+
+		h1 {
+			text-align: center;
+			margin-top: 50px;
+		}
+
+		.form {
+			width: 382px;
+			overflow: hidden;
+			margin: auto;
+			/* margin: 20 0 0 450px; */
+			padding: 80px;
+			background: #c9e3e2;
+			border: 2px solid black;
+			border-radius: 15px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			box-shadow: 6px 6px 6px 6px grey;
+
+		}
+
+		label {
+			font-size: 20px;
+			margin-bottom: 10px;
+		}
+
+		select {
+			padding: 10px;
+			font-size: 16px;
+			border: none;
+			background-color: #f2f2f2;
+			border-radius: 5px;
+			box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+			width: 200px;
+			margin-bottom: 20px;
+		}
+
+		input[type=button] {
+			background-color: #4CAF50;
+			color: #fff;
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			font-size: 16px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+			text-align: center;
+			display: flex;
+		}
+
+		input[type=button]:hover {
+			background-color: #3e8e41;
+		}
+
+		.padding {
+			padding-top: 50px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="padding">
+		<h1>{% block MainTitle %}{% endblock  %}</h1>
+		<form class="form">
+			<label for="add-area">{% block title %}{% endblock %}</label>
+			<select id="add-area" name="add-area">
+				<option value="area1">Area 1</option>
+				<option value="area2">Area 2</option>
+				<option value="area3">Area 3</option>
+				<option value="area4">Area 4</option>
+			</select>
+			<input type="button" value="Submit">
+		</form>
+	</div>
+</body>
+
+</html>

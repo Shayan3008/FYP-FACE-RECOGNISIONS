@@ -16,15 +16,17 @@ class User {
       };
   Future<String?> LoginUser() async {
     Response response = await http.post(
-        Uri.parse(
-          "${StaticData.httpUrl}${StaticData.portNumber}/apis/UserLogin/",
-        ),
-        body: jsonEncode(toJson()),
-        headers: {"Referer": "http://127.0.0.1:8000"});
+      Uri.parse(
+        "${StaticData.httpUrl}${StaticData.portNumber}/apis/UserLogin/",
+      ),
+      body: jsonEncode(toJson()),
+      headers: {
+        "Referer": "http://127.0.0.1:8000",
+      },
+    );
     print(response.body);
     if (response.statusCode == 200) {
       dynamic data = json.decode(response.body);
-      print(data);
       return data["name"];
     }
     return null;

@@ -1,0 +1,26 @@
+{% extends 'admin/Forms/base.html' %}
+{% block webtitle %}Camera Form{% endblock %}
+{% block MainTitle %}Camera Form{% endblock %}
+{% block inputs %}
+
+<form class="form">
+	<label for="latitude">Latitude:</label>
+	<input type="text" id="latitude" name="latitude" placeholder="Enter latitude">
+	<label for="longitude">Longitude:</label>
+	<input type="text" id="longitude" name="longitude" placeholder="Enter longitude">
+	<label for="area-name">Area Name:</label>
+	<select id="area-Select" name="area-name">
+		{% for link in list %}
+		<option value={{link.id}}>{{link.Area_name}}</option>
+		{% endfor %}
+
+	</select>
+	<input type="button" value="Login">
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+	// let latitude = 
+</script>
+{% endblock %}

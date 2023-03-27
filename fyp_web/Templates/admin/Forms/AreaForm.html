@@ -1,0 +1,48 @@
+{% extends 'admin/Forms/base.html' %}
+{% block webtitle %}Area Form{% endblock %}
+{% block MainTitle %}Add Area form{% endblock %}
+{% block inputs %}
+<form class="form">
+    <label for="add-area">Add Area</label>
+    <input id="add-area" name="Area_Name" type="text">
+    <input style="margin-top:10px" class="submit_button" type="button" value="Submit">
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+    const getCookie = (name) => {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    document.querySelector(".submit_button").addEventListener("click", async (e) => {
+        AreaName = document.querySelector("#add-area").value
+        if (AreaName.length === 0) return;
+        const response = await fetch("http://127.0.0.1:8000/apis/AddArea/", {
+            method: "POST",
+            body: JSON.stringify({
+                "Area_Name": AreaName,
+            }),
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        })
+        if (response.status === 200) {
+            document.querySelector("#add-area").value = ""
+            window.location = "/survallence/"
+
+        }
+    })
+</script>
+{% endblock %}

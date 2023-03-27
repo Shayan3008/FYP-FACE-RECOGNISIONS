@@ -18,7 +18,7 @@ from users.models import Users
 def GetData(request):
     sharedMethods = Shared_Methods()
     # Coordinates.objects.get(id = 4).delete()
-    return HttpResponse(sharedMethods.SendModelDataApiHelper(Users))
+    return HttpResponse(sharedMethods.SendModelDataApiHelper(policeman))
 
 
 # Api To Add Camera
@@ -92,8 +92,9 @@ def UserLogin(request):
 # Api to Add PoliceMan
 def AddPoliceman(request):
     requestData = json.loads(request.body)
+    print(requestData)
     policeman(email=requestData["email"], password=requestData["password"],
-              area=Area.objects.get(id=1)).save()
+              area=Area.objects.get(id=int(requestData["area"]))).save()
     return HttpResponse("Police Added")
 
 def GetCookie(request):
@@ -141,3 +142,11 @@ def PoliceLogin(request):
         return HttpResponse("Logged In")
     else:
         return HttpResponse("Wrong Email ", status=404)
+
+
+def AddArea(request):
+    requestData = json.loads(request.body)
+    print(requestData)
+    area = Area(Area_name = requestData["Area_Name"])
+    area.save()
+    return render(request, "admin/control.html")

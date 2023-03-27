@@ -28,5 +28,8 @@ urlpatterns = [
     path("AddPolice/",view=views.AddPoliceman,name = "Adding Policeman"),
     path("AddCameraLinks/",view = views.AddCameraLinks, name = "Add Links"),
     path("PoliceLogin/",view=views.PoliceLogin,name="Police Login"),
-    path("GetCookie/" ,view = views.GetCookie, name="Get Cookie")
+    path("GetCookie/" ,view = views.GetCookie, name="Get Cookie"),
+    path("AddArea/",view=views.AddArea,name="Add Area"),
 ]
+
+# http://127.0.0.1:8000/apis/AddPolice/
