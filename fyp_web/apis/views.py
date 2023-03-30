@@ -24,13 +24,26 @@ def GetData(request):
 # Api To Add Camera
 def AddCamera(request):
     DataBody = json.loads(request.body)
-    area = Area.objects.get(id = DataBody["AreaId"])
-    coordinate = Coordinates(latitude = DataBody["latitude"],longitude = DataBody["longitude"],area = area)
-    coordinate.save()
+    if request.method == "POST":
+        area = Area.objects.get(id = DataBody["AreaId"])
+        coordinate = Coordinates(latitude = DataBody["latitude"],longitude = DataBody["longitude"],area = area)
+        coordinate.save()
+        camera = Camera(cameraLocation=coordinate)
+        camera.save()
+        return HttpResponse("Camera And Location Added!!")
+    elif request.method == "PUT":
+        camera = Camera.objects.get(id = DataBody["id"])
+        camera.latitude = DataBody["latitude"]
+        camera.longitude = DataBody["longitude"]
+        area = Area.objects.get(id = DataBody["AreaId"])
+        camera.area = area
+        camera.save()
+        return HttpResponse("Camera Details Updated")
+    elif request.method == "DELETE":
+        Camera.objects.get(id = DataBody["CameraId"]).delete()
+        return HttpResponse("Camera Deleted")
 
-    camera = Camera(cameraLocation=coordinate)
-    camera.save()
-    return HttpResponse("Camera And Location Added!!")
+
    
 
 
@@ -92,10 +105,23 @@ def UserLogin(request):
 # Api to Add PoliceMan
 def AddPoliceman(request):
     requestData = json.loads(request.body)
-    print(requestData)
-    policeman(email=requestData["email"], password=requestData["password"],
-              area=Area.objects.get(id=int(requestData["area"]))).save()
-    return HttpResponse("Police Added")
+    if request.method == "POST":
+        # print(requestData)
+        policeman(email=requestData["email"], password=requestData["password"],
+                area=Area.objects.get(id=requestData["area"])).save()
+        return HttpResponse("Police Added")
+    elif request.method == "PUT":
+        police = policeman.objects.get(id = requestData["id"])
+        police.email = requestData["email"]
+        police.password = requestData["password"]
+        area=Area.objects.get(id=requestData["area"])
+        police.area = area
+        return HttpResponse("Police Updated")
+    elif request.method == "DELETE":
+        policeman.objects.get(id = requestData["id"]).delete()
+        return HttpResponse("Police Deleted")
+
+
 
 def GetCookie(request):
     return HttpResponse(json.dumps(
@@ -145,8 +171,26 @@ def PoliceLogin(request):
 
 
 def AddArea(request):
-    requestData = json.loads(request.body)
-    print(requestData)
-    area = Area(Area_name = requestData["Area_Name"])
-    area.save()
-    return render(request, "admin/control.html")
+    # Add Api
+    if request.method == "POST":
+        requestData = json.loads(request.body)
+        print(requestData)
+        area = Area(Area_name = requestData["Area_Name"])
+        area.save()
+        return HttpResponse("Added Area")
+    # Update Api
+    elif request.method == "PUT":
+        requestData = json.loads(request.body)
+        area = Area.objects.get(id = requestData["id"])
+        area.Area_name = requestData["Area_Name"]
+        area.save()
+        return HttpResponse("Updated Area")
+    # Delete Api
+    elif request.method == "DELETE":
+        requestData = json.loads(request.body)
+        area = Area.objects.get(id = requestData["id"]).delete()
+        return HttpResponse("Deleted Area")
+    
+
+#text {body}
+#file {pdf,doc,video,audio,image} blob

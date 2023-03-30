@@ -1,24 +1,53 @@
 from django.shortcuts import render, HttpResponse
 from area.models import Area
+from cameras.models import Camera
 from models.face.face import Face
 from models.gait.gait import load_model
 from models.gait.gait import main
 import json
+from policemans.models import policeman
 
 from shared.Shared_Methods import Shared_Methods
 # Create your views here.
 
 
+def ViewForAreaList(request):
+    shared = Shared_Methods()
+    Table_Head = shared.GetAllColumnNamesFromTable(Area)
+    dataList = list(Area.objects.values())
+    context = {"list": dataList,"list2":Table_Head}
+    return render(request, "admin/List/AreaList.html",context=context)
+
+def ViewForPoliceList(request):
+    shared = Shared_Methods()
+    Table_Head = shared.GetAllColumnNamesFromTable(policeman)
+    Table_Head.reverse()
+    Table_Head.pop(Table_Head.index("password"))
+    dataList = list(policeman.objects.values("area_id","email","id"))
+    context = {"list": dataList,"list2":Table_Head}
+    return render(request, "admin/List/SignupList.html",context=context)
 
 
+def ViewForCameraList(request):
+    location = Camera.objects.all()
+    Data_List = []
+    for i in location:
+        camera_location = i.cameraLocation
+        Data_List.append({
+            "id": i.id,
+            "longitude": camera_location.longitude,
+            "latitude": camera_location.latitude,
+        })
+    Table_Head = ["id","longitude","latitude"]
+    context = {"list": Data_List,"list2":Table_Head}
+    return render(request, "admin/List/CameraList.html",context=context)
 
 def index(request):  # Main WebPage Url
     # with open("static/project.mp4", "rb") as f:
     #     video = f.read()
     # with open("static/file.mp4", "wb+") as destination:
     #     destination.write(video)
-    context = {"list": list(Area.objects.values())}
-    return render(request, "admin/Forms/CameraForm.html",context=context)
+    return render(request, "admin/Forms/PoliceSignupForm.html")
 
 
 def video(request):  # Function to Upload and give video input to Model

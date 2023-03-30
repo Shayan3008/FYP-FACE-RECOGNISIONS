@@ -1,0 +1,53 @@
+{% extends 'admin/List/base.html' %}
+
+{% block DocumentTitle %}
+    Policeman
+{% endblock %}
+
+{% block Title %}
+    Policeman
+{% endblock %}
+
+{% block AddTitle %}   
+    Policeman
+{% endblock  %}
+
+
+{% block TableHeads %}
+    {% for link in list2 %}
+        <th>{{link}}</th>
+    {% endfor %}     
+{% endblock  %}
+
+
+{% block TableBody %}
+    {% for link in list %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{link.area_id}}</td>
+            <td>{{link.email}}</td>
+            <td>{{link.id}}</td>
+            <td>
+                <button class="Update" >Update</button>
+                <button class="Delete">Delete</button>
+            </td>
+            
+        </tr>
+    {% endfor %}   
+{% endblock  %}
+  
+{% block Script %}
+<script>
+    document.querySelector(".Add").addEventListener("click",(Event)=>{
+        console.log("click")
+    })
+
+    document.querySelector(".Update").addEventListener("click",(Event)=>{
+        console.log("click")
+    })
+
+    document.querySelector(".Delete").addEventListener("click",(Event)=>{
+        console.log("click")
+    })
+</script>
+{% endblock  %}

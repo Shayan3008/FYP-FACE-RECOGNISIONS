@@ -32,4 +32,4 @@ urlpatterns = [
     path("AddArea/",view=views.AddArea,name="Add Area"),
 ]
 
-# http://127.0.0.1:8000/apis/AddPolice/
+# http://127.0.0.1:8000/apis/SendVideo/

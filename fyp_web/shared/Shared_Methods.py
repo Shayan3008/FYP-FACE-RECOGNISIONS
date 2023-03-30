@@ -25,3 +25,6 @@ class Shared_Methods:
     def DeleteModelDataApiHelper(self,Model):
         Model.objects.all().delete()
         return "Model Deleted!!!"
+    
+    def GetAllColumnNamesFromTable(self,Model):
+        return [f.get_attname() for f in Model._meta.fields]
