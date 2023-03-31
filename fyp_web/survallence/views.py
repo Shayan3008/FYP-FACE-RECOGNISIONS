@@ -1,9 +1,9 @@
 from django.shortcuts import render, HttpResponse
 from area.models import Area
 from cameras.models import Camera
-from models.face.face import Face
-from models.gait.gait import load_model
-from models.gait.gait import main
+# from models.face.face import Face
+# from models.gait.gait import load_model
+# from models.gait.gait import main
 import json
 from policemans.models import policeman
 
@@ -47,7 +47,7 @@ def index(request):  # Main WebPage Url
     #     video = f.read()
     # with open("static/file.mp4", "wb+") as destination:
     #     destination.write(video)
-    return render(request, "admin/Forms/PoliceSignupForm.html")
+    return render(request, "admin/control.html")
 
 
 def video(request):  # Function to Upload and give video input to Model
