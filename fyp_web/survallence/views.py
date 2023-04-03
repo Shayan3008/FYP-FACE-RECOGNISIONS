@@ -5,9 +5,11 @@ from cameras.models import Camera
 # from models.gait.gait import load_model
 # from models.gait.gait import main
 import json
+import os
 from policemans.models import policeman
 
 from shared.Shared_Methods import Shared_Methods
+from survallence.thread import ModelThread
 # Create your views here.
 
 
@@ -47,6 +49,7 @@ def index(request):  # Main WebPage Url
     #     video = f.read()
     # with open("static/file.mp4", "wb+") as destination:
     #     destination.write(video)
+    print(os.getcwd())
     return render(request, "admin/control.html")
 
 
@@ -61,6 +64,8 @@ def video(request):  # Function to Upload and give video input to Model
     # video_path = main(reid, request.POST.get("input")[
     #                   1:], "static/temp/"+request.FILES["vid"].name)
     # return HttpResponse(video_path)
+    ModelThread(request.POST.get("input")[
+                      1:], "static/temp/"+request.FILES["vid"].name).start() 
     return HttpResponse("shayan")
 
 
@@ -70,6 +75,7 @@ def input(request):  # Helper function to save input file and respond files name
     sharedMethods = Shared_Methods()
     sharedMethods.HandleUploadFile("static/input/", request.FILES["input"])
     return HttpResponse(fileName)
+
 
 def face(request):
     return render(request, "admin/face.html")

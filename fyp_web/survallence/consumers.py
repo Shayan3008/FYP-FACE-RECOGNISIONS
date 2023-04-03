@@ -7,7 +7,7 @@ class CameraConsumer(WebsocketConsumer):
 
     def connect(self):
         self.room_group_name = self.scope['url_route']['kwargs']['groupid']
-
+        print(self.room_group_name)
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
@@ -27,6 +27,7 @@ class CameraConsumer(WebsocketConsumer):
         )
 
     def receive(self, text_data):
+        print("Hello Police")
         print(text_data)
         if self.room_group_name == "admin":
             text_data = json.loads(text_data)["id"]
@@ -38,6 +39,7 @@ class CameraConsumer(WebsocketConsumer):
                 }
             )
 
+
     def Alert_Generate(self, event):
         message = event["msg"]
         self.send(json.dumps({
@@ -45,3 +47,8 @@ class CameraConsumer(WebsocketConsumer):
             "msg": message
         }))
         # text_data_json = json.loads(text_data)
+    def update(self,event):
+        self.send(json.dumps({
+            "type":"Police",
+            "msg":event["message"]
+        }))
