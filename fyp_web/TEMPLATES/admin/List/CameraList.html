@@ -1,4 +1,4 @@
-{% extends 'admin/List/base.html' %}
+{% extends 'admin/List/Base.html' %}
 
 {% block DocumentTitle %}
 Camera
@@ -28,7 +28,7 @@ Camera
     <td>{{link.longitude}}</td>
     <td>{{link.latitude}}</td>
     <td>
-        <button class="Update" >Update</button>
+        <button accessKey={{link.id}} class="Update" >Update</button>
         <button class="Delete">Delete</button>
     </td>
 </tr>
@@ -38,15 +38,21 @@ Camera
 {% block Script %}
 <script>
     document.querySelector(".Add").addEventListener("click", (Event) => {
-        console.log("click")
+        window.location = "/Forms/CameraForm/"
     })
 
-    document.querySelector(".Update").addEventListener("click", (Event) => {
-        console.log("click")
+    document.querySelectorAll(".Update").forEach(e=>{
+        localStorage.clear()
+        e.addEventListener("click",async (Event)=>{
+            const data = await fetch(`http://127.0.0.1:8000/apis/GetCameraById/${Event.target.accessKey}`)
+            const data2 = await data.json()
+            localStorage.setItem("data",JSON.stringify(data2))
+            window.location = "/Forms/CameraForm/"
+        })
     })
 
-    document.querySelector(".Delete").addEventListener("click", (Event) => {
-        console.log("click")
+    document.querySelector(".Delete").addEventListener("click", async (Event) => {
+        
     })
 </script>
 {% endblock %}

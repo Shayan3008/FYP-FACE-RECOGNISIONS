@@ -1,4 +1,4 @@
-{% extends 'admin/List/base.html' %}
+{% extends 'admin/List/Base.html' %}
 
 {% block DocumentTitle %}
     Policeman
@@ -39,7 +39,7 @@
 {% block Script %}
 <script>
     document.querySelector(".Add").addEventListener("click",(Event)=>{
-        console.log("click")
+        window.location = "/Forms/PoliceForm"
     })
 
     document.querySelector(".Update").addEventListener("click",(Event)=>{

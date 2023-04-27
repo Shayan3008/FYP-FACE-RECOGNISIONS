@@ -9,9 +9,9 @@
 	<label for="longitude">Longitude:</label>
 	<input type="text" id="longitude" name="longitude" placeholder="Enter longitude">
 	<label for="area-name">Area Name:</label>
-	<select id="area-Select" name="area-name">
+	<select id="area-Select" name="area-name" value=4>
 		{% for link in list %}
-		<option value={{link.id}}>{{link.Area_name}}</option>
+		<option class="option" value={{link.id}}>{{link.Area_name}}</option>
 		{% endfor %}
 
 	</select>
@@ -22,5 +22,21 @@
 {% block script %}
 <script>
 	// let latitude = 
+	window.onload = (e)=>{
+		let data = localStorage.getItem("data")
+		if(data == null)
+			return
+		values = JSON.parse(data)
+		document.getElementById("longitude").value = values.long
+		document.getElementById("latitude").value = values.lat
+		document.querySelectorAll(".option").forEach(e=>{
+			console.log(values.area)
+			if(e.value == values.area)
+				e.selected = true
+		})
+	}
+	document.getElementById("area-Select").onchange = (e)=>{
+		console.log(e.target.value)
+	}
 </script>
 {% endblock %}

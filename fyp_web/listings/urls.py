@@ -13,12 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+
+from django.urls import path
+from listings import views
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("survallence/", include("survallence.urls")),
-    path("apis/", include("apis.urls")),
-    path("Forms/",include("forms.urls")),
-    path("Listing/",include("listings.urls"))
+    path("Cameralisting/",view = views.cameraList, name="Camera List"),
+    path("Arealisting/",view = views.AreaList, name="Area List"),
+    path("Policelisting/",view = views.PoliceList,name = "Police List")
 ]
+
+# http://127.0.0.1:8000/apis/SendVideo/

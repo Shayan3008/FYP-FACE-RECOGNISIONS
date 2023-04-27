@@ -42,7 +42,7 @@ def ViewForCameraList(request):
         })
     Table_Head = ["id","longitude","latitude"]
     context = {"list": Data_List,"list2":Table_Head}
-    return render(request, "admin/List/CameraList.html",context=context)
+    return render(request, "admin/Forms/CameraForm.html",context=context)
 
 def index(request):  # Main WebPage Url
     # with open("static/project.mp4", "rb") as f:

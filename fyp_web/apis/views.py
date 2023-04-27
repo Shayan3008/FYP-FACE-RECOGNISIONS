@@ -18,7 +18,7 @@ from users.models import Users
 def GetData(request):
     sharedMethods = Shared_Methods()
     # Coordinates.objects.get(id = 4).delete()
-    return HttpResponse(sharedMethods.SendModelDataApiHelper(policeman))
+    return HttpResponse(sharedMethods.SendModelDataApiHelper(Camera))
 
 
 # Api To Add Camera
@@ -64,42 +64,45 @@ def getLocationWithCameraId(request):
             "longitude": camera_location.longitude,
             "latitude": camera_location.latitude,
         })
-    return HttpResponse(json.dumps(Data_List))
+    return HttpResponse(Data_List)
 
 
 # Api to send video to Police men
 def SendVideo(request):
-    data = json.loads(request.body)
-    file_path = os.path.join("static", data["FileName"])
-    file_wrapper = FileWrapper(open(file_path, 'rb'))
-    response = FileResponse(file_wrapper, content_type='video/mp4')
-    response['Content-Disposition'] = 'attachment; filename="myvideo.mp4"'
-    response['Content-Length'] = os.path.getsize(file_path)
-    return response
+    if request.method == "POST":
+        data = json.loads(request.body)
+        file_path = os.path.join("static", data["FileName"])
+        file_wrapper = FileWrapper(open(file_path, 'rb'))
+        response = FileResponse(file_wrapper, content_type='video/mp4')
+        response['Content-Disposition'] = 'attachment; filename="myvideo.mp4"'
+        response['Content-Length'] = os.path.getsize(file_path)
+        return response
 
 
 # Api to SignUp User
 def UserSignUp(request):
-    userData = json.loads(request.body)
-    # Assuming all the exception handling is done in Flutter App
-    Users(name=userData["name"], email=userData["email"],
-          password=userData["password"]).save()
-    return HttpResponse("Congrats Ur Account Is Created")
+    if request.method == "POST":
+        userData = json.loads(request.body)
+        # Assuming all the exception handling is done in Flutter App
+        Users(name=userData["name"], email=userData["email"],
+            password=userData["password"]).save()
+        return HttpResponse("Congrats Ur Account Is Created")
 
 # Api to Login User
 
 
 def UserLogin(request):
-    requestData = json.loads(request.body)
-    user = Users.objects.filter(email=requestData["email"])
-    if len(user) > 0:
-        if user[0].password != requestData["password"]:
-            return HttpResponse("Wrong Password", status=404)
-        return HttpResponse(json.dumps({
-            "name":user[0].name,
-        }))
-    else:
-        return HttpResponse("Wrong Email ", status=404)
+    if request.method == "POST":
+        requestData = json.loads(request.body)
+        user = Users.objects.filter(email=requestData["email"])
+        if len(user) > 0:
+            if user[0].password != requestData["password"]:
+                return HttpResponse("Wrong Password", status=404)
+            return HttpResponse(json.dumps({
+                "name":user[0].name,
+            }))
+        else:
+            return HttpResponse("Wrong Email ", status=404)
 
 
 # Api to Add PoliceMan
@@ -160,14 +163,15 @@ def AddCameraLinks(request):
 # password: password for police
 # }
 def PoliceLogin(request):
-    requestData = json.loads(request.body)
-    policemanData = policeman.objects.filter(email=requestData["email"])
-    if len(policemanData) > 0:
-        if policemanData[0].password != requestData["password"]:
-            return HttpResponse("Wrong Password", status=404)
-        return HttpResponse("Logged In")
-    else:
-        return HttpResponse("Wrong Email ", status=404)
+    if request.method == "POST":
+        requestData = json.loads(request.body)
+        policemanData = policeman.objects.filter(email=requestData["email"])
+        if len(policemanData) > 0:
+            if policemanData[0].password != requestData["password"]:
+                return HttpResponse("Wrong Password", status=404)
+            return HttpResponse("Logged In")
+        else:
+            return HttpResponse("Wrong Email ", status=404)
 
 
 def AddArea(request):
@@ -191,6 +195,17 @@ def AddArea(request):
         area = Area.objects.get(id = requestData["id"]).delete()
         return HttpResponse("Deleted Area")
     
+
+def GetCameraById(request,id):
+    camera = Camera.objects.get(id = id)
+    dict1 = {
+        "long":camera.cameraLocation.longitude,
+        "lat":camera.cameraLocation.latitude,
+        "area":camera.cameraLocation.area.id
+    }
+    return HttpResponse(json.dumps(dict1))
+
+
 
 #text {body}
 #file {pdf,doc,video,audio,image} blob
