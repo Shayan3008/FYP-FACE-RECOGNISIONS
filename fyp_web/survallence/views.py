@@ -13,44 +13,13 @@ from survallence.thread import ModelThread
 # Create your views here.
 
 
-def ViewForAreaList(request):
-    shared = Shared_Methods()
-    Table_Head = shared.GetAllColumnNamesFromTable(Area)
-    dataList = list(Area.objects.values())
-    context = {"list": dataList,"list2":Table_Head}
-    return render(request, "admin/List/AreaList.html",context=context)
-
-def ViewForPoliceList(request):
-    shared = Shared_Methods()
-    Table_Head = shared.GetAllColumnNamesFromTable(policeman)
-    Table_Head.reverse()
-    Table_Head.pop(Table_Head.index("password"))
-    dataList = list(policeman.objects.values("area_id","email","id"))
-    context = {"list": dataList,"list2":Table_Head}
-    return render(request, "admin/List/SignupList.html",context=context)
-
-
-def ViewForCameraList(request):
-    location = Camera.objects.all()
-    Data_List = []
-    for i in location:
-        camera_location = i.cameraLocation
-        Data_List.append({
-            "id": i.id,
-            "longitude": camera_location.longitude,
-            "latitude": camera_location.latitude,
-        })
-    Table_Head = ["id","longitude","latitude"]
-    context = {"list": Data_List,"list2":Table_Head}
-    return render(request, "admin/Forms/CameraForm.html",context=context)
-
 def index(request):  # Main WebPage Url
     # with open("static/project.mp4", "rb") as f:
     #     video = f.read()
     # with open("static/file.mp4", "wb+") as destination:
     #     destination.write(video)
-    print(os.getcwd())
-    return render(request, "admin/control.html")
+    context = Camera.objects.all()
+    return render(request, "admin/index.html", context = {"camera": context})
 
 
 def video(request):  # Function to Upload and give video input to Model
@@ -83,3 +52,10 @@ def face(request):
 
 def cookie(request):
     return render(request,"admin/cookie.html")
+
+def alertVideo(request,id):
+    camera = Camera.objects.get(id = id)
+    context = {
+        "camera":camera
+    }
+    return render(request,"admin/video.html",context = context)

@@ -28,8 +28,8 @@ Camera
     <td>{{link.longitude}}</td>
     <td>{{link.latitude}}</td>
     <td>
-        <button accessKey={{link.id}} class="Update" >Update</button>
-        <button class="Delete">Delete</button>
+        <button accessKey={{link.id}} class="Update">Update</button>
+        <button accessKey={{link.id}} class="Delete">Delete</button>
     </td>
 </tr>
 {% endfor %}
@@ -41,18 +41,32 @@ Camera
         window.location = "/Forms/CameraForm/"
     })
 
-    document.querySelectorAll(".Update").forEach(e=>{
+    document.querySelectorAll(".Update").forEach(e => {
         localStorage.clear()
-        e.addEventListener("click",async (Event)=>{
+        e.addEventListener("click", async (Event) => {
             const data = await fetch(`http://127.0.0.1:8000/apis/GetCameraById/${Event.target.accessKey}`)
             const data2 = await data.json()
-            localStorage.setItem("data",JSON.stringify(data2))
+            localStorage.setItem("data", JSON.stringify(data2))
             window.location = "/Forms/CameraForm/"
         })
     })
 
+    document.querySelectorAll(".Delete").forEach(e => {
+        e.addEventListener("click", async (Event) => {
+            const data = await fetch("http://127.0.0.1:8000/apis/AddCamera/", {
+                method: "DELETE",
+                body: JSON.stringify({
+                    "CameraId": Event.target.accessKey,
+                })
+            })
+            if (data.status === 200) {
+                window.location.reload()
+            }
+        })
+    })
+
     document.querySelector(".Delete").addEventListener("click", async (Event) => {
-        
+
     })
 </script>
 {% endblock %}

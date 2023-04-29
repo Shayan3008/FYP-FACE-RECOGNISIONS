@@ -33,12 +33,17 @@ def AddCamera(request):
         return HttpResponse("Camera And Location Added!!")
     elif request.method == "PUT":
         camera = Camera.objects.get(id = DataBody["id"])
-        camera.latitude = DataBody["latitude"]
-        camera.longitude = DataBody["longitude"]
+        coordinate = camera.cameraLocation
+        coordinate.latitude = DataBody["latitude"]
+        coordinate.longitude = DataBody["longitude"]
+        
         area = Area.objects.get(id = DataBody["AreaId"])
-        camera.area = area
+        coordinate.area = area
+        coordinate.save()
+        camera.cameraLocation = coordinate
         camera.save()
-        return HttpResponse("Camera Details Updated")
+        print(camera.cameraLocation.area.Area_name)
+        return HttpResponse(camera.cameraLocation.area.Area_name)
     elif request.method == "DELETE":
         Camera.objects.get(id = DataBody["CameraId"]).delete()
         return HttpResponse("Camera Deleted")
@@ -198,13 +203,14 @@ def AddArea(request):
 
 def GetCameraById(request,id):
     camera = Camera.objects.get(id = id)
+    # print(camera.cameraLocation.area.Area_name)
     dict1 = {
+        "id":id,
         "long":camera.cameraLocation.longitude,
         "lat":camera.cameraLocation.latitude,
         "area":camera.cameraLocation.area.id
     }
     return HttpResponse(json.dumps(dict1))
-
 
 
 #text {body}
