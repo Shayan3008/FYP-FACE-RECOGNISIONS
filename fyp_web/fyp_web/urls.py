@@ -19,5 +19,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("survallence/", include("survallence.urls")),
     path("apis/", include("apis.urls")),
-    path("Forms/",include("forms.urls"))
+    path("Forms/",include("forms.urls")),
+    path("Listing/",include("listings.urls"))
 ]

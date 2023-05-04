@@ -1,0 +1,103 @@
+{% extends 'admin/Forms/base.html' %}
+{% block webtitle %}Camera Form{% endblock %}
+{% block MainTitle %}Camera Form{% endblock %}
+{% block inputs %}
+
+<form class="form">
+	<label for="latitude">Latitude:</label>
+	<input type="text" id="latitude" name="latitude" placeholder="Enter latitude">
+	<label for="longitude">Longitude:</label>
+	<input type="text" id="longitude" name="longitude" placeholder="Enter longitude">
+	<label for="area-name">Area Name:</label>
+	<select id="area-Select" name="area-name" value=4>
+		{% for link in list %}
+		<option class="option" value={{link.id}}>{{link.Area_name}}</option>
+		{% endfor %}
+
+	</select>
+	<input class="submitbtn" type="button" value="Add">
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+	// let latitude = 
+	let longitudeInput = document.getElementById("longitude")
+	let latitudeInput = document.getElementById("latitude")
+	let areaSelect = document.getElementById("area-Select")
+	let submitButton = document.querySelector(".submitbtn")
+
+	// Helper Function Which Adds Data For update in input fields
+	const insertUpdateData = (obj) => {
+		longitudeInput.value = obj.long
+		latitudeInput.value = obj.lat
+		document.querySelectorAll(".option").forEach(e => {
+			console.log(e.value + obj.area)
+			if (e.value == obj.area)
+				e.selected = true
+		})
+	}
+
+	// Func to clear fields
+	const ClearFields = () => {
+		latitudeInput.value = ""
+		longitudeInput.value = ""
+		areaSelect.value = ""
+		localStorage.removeItem("data")
+	}
+
+	submitButton.addEventListener("click", () => {
+		console.log("Clicked")
+		if (submitButton.value == "Add")
+			AddCamera()
+		else
+			UpdateCamera()
+	})
+
+	// Adding Camera
+	const AddCamera = async () => {
+		const data = await fetch("http://127.0.0.1:8000/apis/AddCamera/", {
+			method: "POST",
+			body: JSON.stringify({
+				"AreaId": areaSelect.value,
+				"latitude": latitudeInput.value,
+				"longitude": longitudeInput.value
+			})
+		})
+		if (data.status === 200) {
+			ClearFields()
+			window.location = "/Listing/Cameralisting"
+		}
+	}
+
+	const UpdateCamera = async () => {
+		const data = await fetch("http://127.0.0.1:8000/apis/AddCamera/", {
+			method: "PUT",
+			body: JSON.stringify({
+				"id":JSON.parse(localStorage.getItem("data")).id,
+				"AreaId": areaSelect.value,
+				"latitude": latitudeInput.value,
+				"longitude": longitudeInput.value
+			})
+		})
+		if (data.status === 200) {
+			ClearFields()
+			window.location = "/Listing/Cameralisting"
+		}
+	}
+	// Inserting Data By Checking For Add Or Update Forms
+	window.onload = (e) => {
+		let data = localStorage.getItem("data")
+		if (data == null)
+			return
+		submitButton.value = "Update"
+		values = JSON.parse(data)
+		console.log(values)
+		insertUpdateData(values)
+	}
+	areaSelect.onchange = (e) => {
+		console.log(e.target.value)
+	}
+
+</script>
+{% endblock %}

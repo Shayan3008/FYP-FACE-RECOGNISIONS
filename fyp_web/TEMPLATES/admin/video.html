@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #cfdddc;
+            font-family: "Lato", sans-serif;
+            overflow-y: scroll;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dropdown-btn {
+      border: none;
+      background: none;
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sidenav a,
+    .dropdown-btn {
+      padding: 8px 8px 8px 32px;
+      text-decoration: none;
+      font-size: 15px;
+      color: #181616;
+      display: block;
+      transition: 0.3s;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      outline: none;
+
+    }
+
+    .sidenav a:hover,
+    .dropdown-btn:hover,
+    .arrow-down:hover {
+      color: #8f0f0f;
+    }
+
+    .sidenav .closebtn {
+      position: absolute;
+      top: 0;
+      right: 25px;
+      font-size: 36px;
+      margin-left: 50px;
+    }
+
+    .fa-caret-down {
+      float: right;
+      padding-right: 8px;
+    }
+
+    .arrow-down {
+      float: right;
+      margin-right: 10px;
+    }
+
+    .dropdown-container {
+      display: none;
+      background-color: #a6c5c4b7;
+      padding-left: 8px;
+    }
+
+    .content:hover {
+      background-color: #699492b7;
+    }
+
+    @media screen and (max-height: 450px) {
+      .sidenav {
+        padding-top: 15px;
+      }
+
+      .sidenav a {
+        font-size: 18px;
+      }
+
+      .sidenav button {
+        font-size: 18px;
+      }
+    }
+
+    </style>
+</head>
+
+<body class="p-4">
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <br>
+        <a href="/survallence/">SURVEILLANCE SYSTEM</a>
+        <a href="#">FACE RECOGNITION SYSTEM</a>
+        <a href="#">GAIT RECOGNITION SYSTEM</a>
+        <button class="dropdown-btn">Dropdown
+            <!-- <i class="fa fa-caret-down"></i> -->
+            <i class="arrow-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a class="content" href="/Listing/Policelisting/">Police</a>
+            <a class="content" href="/Listing/Arealisting/">Area</a>
+            <a class="content" href="/Listing/Cameralisting/">Camera</a>
+        </div>
+
+    </div>
+    <h1 class="text-center">Camera ID: {{camera.id}}</h1>
+    <video class="d-flex p-4 m-auto" src="../../../static/test6.mp4" controls></video>
+    <div class="container text-center hidden mt-3">
+        <input type="file" class="file" name="file" />
+        <button class="btn btn-primary click">Submit</button>
+    </div>
+    <script>
+        function openNav() {
+          document.getElementById("mySidenav").style.width = "250px";
+        }
+    
+        function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+        }
+        var dropdown = document.getElementsByClassName("dropdown-btn");
+        var i;
+    
+        for (i = 0; i < dropdown.length; i++) {
+          dropdown[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var dropdownContent = this.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+              dropdownContent.style.display = "none";
+            } else {
+              dropdownContent.style.display = "block";
+            }
+          });
+        }
+      </script>
+</body>
+
+</html>

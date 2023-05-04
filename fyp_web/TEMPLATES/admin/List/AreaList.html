@@ -1,0 +1,68 @@
+{% extends 'admin/List/Base.html' %}
+
+{% block DocumentTitle %}
+Area
+{% endblock %}
+
+{% block Title %}
+Area
+{% endblock %}
+
+{% block AddTitle %}
+Area
+{% endblock %}
+
+
+{% block TableHeads %}
+{% for link in list2 %}
+<th>{{link}}</th>
+{% endfor %}
+{% endblock %}
+
+
+{% block TableBody %}
+{% for link in list %}
+<tr>
+    <td>{{forloop.counter}}</td>
+    <td>{{link.id}}</td>
+    <td>{{link.Area_name}}</td>
+    <td>
+        <button name={{link.Area_name}} accesskey={{link.id}} class="Update">Update</button>
+        <button accesskey={{link.id}} class="Delete">Delete</button>
+    </td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block Script %}
+<script>
+    document.querySelector(".Add").addEventListener("click", (Event) => {
+        window.location = "/Forms/AreaForm/"
+    })
+
+    document.querySelectorAll(".Update").forEach(node => {
+        node.addEventListener("click", (event) => {
+            localStorage.clear()
+            localStorage.setItem("data",JSON.stringify({
+                "id":event.target.accessKey,
+                "Area_Name":event.target.name
+            }))
+            window.location = "/Forms/AreaForm/"
+        })
+    })
+
+    document.querySelectorAll(".Delete").forEach(node => {
+        node.addEventListener("click", async (event) => {
+            const response = await fetch("http://127.0.0.1:8000/apis/AddArea/", {
+            method: "DELETE",
+            body:JSON.stringify({
+                "id": event.target.accessKey,
+            }),
+        })
+        if (response.status === 200) {
+           window.location.reload()
+        }
+        })
+    })
+</script>
+{% endblock %}

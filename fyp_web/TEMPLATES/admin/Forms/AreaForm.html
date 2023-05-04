@@ -1,0 +1,51 @@
+{% extends 'admin/Forms/base.html' %}
+{% block webtitle %}Area Form{% endblock %}
+{% block MainTitle %}Add Area form{% endblock %}
+{% block inputs %}
+<form class="form">
+    <label for="add-area">Add Area</label>
+    <input id="add-area" name="Area_Name" type="text" placeholder="Add Area Name">
+    <input style="margin-top:10px" class="submit_button" type="button" value="Add">
+</form>
+{% endblock %}
+
+{% block script %}
+<script>
+    let areaInput = document.querySelector("#add-area")
+    let submitBtn = document.querySelector(".submit_button")
+    let areaId = -1
+    window.onload = (e) => {
+        let data = localStorage.getItem("data")
+        if (data == null)
+            return
+        submitBtn.value = "Update"
+        values = JSON.parse(data)
+        areaInput.value = values.Area_Name
+        areaId = values.id
+    }
+
+    const AddOrUpdateAreaMethod = async (AreaName) => {
+        
+        const response = await fetch("http://127.0.0.1:8000/apis/AddArea/", {
+            method: submitBtn.value === "Add" ? "POST" : "PUT",
+            body: submitBtn.value === "Add" ? JSON.stringify({
+                "Area_Name": AreaName,
+            }) : JSON.stringify({
+                "id": areaId,
+                "Area_Name": AreaName,
+            }),
+        })
+        if (response.status === 200) {
+            document.querySelector("#add-area").value = ""
+            window.location = "/Listing/Arealisting"
+
+        }
+    }
+
+    submitBtn.addEventListener("click", async (e) => {
+        AreaName = areaInput.value
+        if (AreaName.length === 0) return;
+        AddOrUpdateAreaMethod(AreaName)
+    })
+</script>
+{% endblock %}
