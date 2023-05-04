@@ -1,10 +1,9 @@
-// ignore: file_names
-import 'package:fyp_app/models/Coordinates.dart';
+import 'package:fyp_app/models/coordinates.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_app/Apis/sockets/AppSocket.dart';
-import 'package:fyp_app/interface/socketInterface.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:fyp_app/Apis/sockets/app_socket.dart';
+import 'package:fyp_app/interface/socket_interface.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? user;
@@ -65,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       locationData = await _location.getLocation();
       Coordinates location = Coordinates(
           long: locationData!.longitude, lat: locationData!.latitude);
-      List<Coordinates> list1 = await Coordinates.getCameraLocationsFromApis();
+      List<Coordinates> list1 = await location.getCameraLocationsFromApis();
       int index = location.getClosestMap(list1);
       socket!.sendSocketMessage(list1[index]);
     } else {
