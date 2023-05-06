@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List<Coordinates> list1 = [
     Coordinates(lat: 24.954026378293587, long: 67.05843673597522),
     Coordinates(lat: 24.946861240743132, long: 67.05332256849731)
@@ -77,6 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
     // initialized Socket Class in the home
     return Scaffold(
       appBar: AppBar(
+        leading: const InkWell(
+          child:  Icon(
+            Icons.vertical_split,
+          ),
+        ),
         title: Text(widget.user!),
         centerTitle: true,
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/Screens/navigation_animation.dart';
 import 'package:fyp_app/Screens/home_screen.dart';
 import 'package:fyp_app/Screens/login_screen.dart';
+import 'package:fyp_app/configs/size_config.dart';
 
 import '../models/user.dart';
 import '../utility/shared_preference_data.dart';
@@ -20,19 +22,22 @@ class _SIGNUPScreenState extends State<SIGNUPScreen> {
 
   bool passValidation = false;
 
+  bool showPass = false;
+
   late ValidationChecker checker;
 
   late SharedPreferenceData storage;
 
   bool loading = false;
-
+  TextEditingController email = TextEditingController();
+  TextEditingController userName = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     checker = ValidationChecker();
     storage = SharedPreferenceData();
-    TextEditingController email = TextEditingController();
-    TextEditingController userName = TextEditingController();
-    TextEditingController password = TextEditingController();
+    SizeConfig().init(context);
+    // print(SizeConfig.verticalAspect!);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -55,8 +60,11 @@ class _SIGNUPScreenState extends State<SIGNUPScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: size.height * 0.3,
+                    height: SizeConfig.screenHeight! * 0.3,
                     child: Image.asset('assets/tracking.jpg'),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.screenHeight! * 0.02,
                   ),
                   FractionallySizedBox(
                     widthFactor: 1.0,
@@ -69,7 +77,14 @@ class _SIGNUPScreenState extends State<SIGNUPScreen> {
                             errorText: userValidation == true
                                 ? "Username must not be empty"
                                 : null,
+                            border: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 0.0),
+                            ),
                           ),
+                        ),
+                        SizedBox(
+                          height: SizeConfig.screenHeight! * 0.02,
                         ),
                         TextField(
                           controller: email,
@@ -78,15 +93,38 @@ class _SIGNUPScreenState extends State<SIGNUPScreen> {
                             errorText: emailValidation == true
                                 ? "Enter Valid Email"
                                 : null,
+                            border: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 0.0),
+                            ),
                           ),
+                        ),
+                        SizedBox(
+                          height: SizeConfig.screenHeight! * 0.02,
                         ),
                         TextField(
                           controller: password,
                           decoration: InputDecoration(
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  showPass = !showPass;
+                                });
+                              },
+                              child: showPass
+                                  ? const Icon(
+                                      Icons.remove_red_eye,
+                                    )
+                                  : const Icon(Icons.remove_red_eye_outlined),
+                            ),
                             labelText: 'Password',
                             errorText: passValidation == true
                                 ? "Pass must be greater than 6 characters"
                                 : null,
+                            border: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 0.0),
+                            ),
                           ),
                         ),
                       ],
@@ -100,8 +138,17 @@ class _SIGNUPScreenState extends State<SIGNUPScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       onPressed: () async => {
-                        signUpMethod(
-                            userName.text, email.text, password.text, context)
+                        // signUpMethod(
+                        //     userName.text, email.text, password.text, context)
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (ctx) => const NavbarAnimation(
+                              child: HomeScreen(
+                                user: 'UI TESTING',
+                              ),
+                            ),
+                          ),
+                        ),
                       },
                       child: const Text(
                         'SIGNUP',
