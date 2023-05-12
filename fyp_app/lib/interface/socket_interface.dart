@@ -1,4 +1,4 @@
-import 'package:fyp_app/models/Coordinates.dart';
+import 'package:fyp_app/models/coordinates.dart';
 
 abstract class SocketInterface {
   void connect(); // Function to connect socket

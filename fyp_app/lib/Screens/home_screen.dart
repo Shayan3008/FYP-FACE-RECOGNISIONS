@@ -1,10 +1,9 @@
-// ignore: file_names
-import 'package:fyp_app/models/Coordinates.dart';
+import 'package:fyp_app/models/coordinates.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_app/Apis/sockets/AppSocket.dart';
-import 'package:fyp_app/interface/socketInterface.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:fyp_app/Apis/sockets/app_socket.dart';
+import 'package:fyp_app/interface/socket_interface.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? user;
@@ -15,7 +14,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   List<Coordinates> list1 = [
     Coordinates(lat: 24.954026378293587, long: 67.05843673597522),
     Coordinates(lat: 24.946861240743132, long: 67.05332256849731)
@@ -65,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
       locationData = await _location.getLocation();
       Coordinates location = Coordinates(
           long: locationData!.longitude, lat: locationData!.latitude);
-      List<Coordinates> list1 = await Coordinates.getCameraLocationsFromApis();
+      List<Coordinates> list1 = await location.getCameraLocationsFromApis();
       int index = location.getClosestMap(list1);
       socket!.sendSocketMessage(list1[index]);
     } else {
@@ -78,6 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
     // initialized Socket Class in the home
     return Scaffold(
       appBar: AppBar(
+        leading: const InkWell(
+          child:  Icon(
+            Icons.vertical_split,
+          ),
+        ),
         title: Text(widget.user!),
         centerTitle: true,
       ),

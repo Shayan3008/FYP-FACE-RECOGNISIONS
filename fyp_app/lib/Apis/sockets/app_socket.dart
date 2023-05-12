@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:fyp_app/interface/socketInterface.dart';
-import 'package:fyp_app/models/Coordinates.dart';
-import 'package:fyp_app/static/StaticData.dart';
+import 'package:fyp_app/interface/socket_interface.dart';
+import 'package:fyp_app/models/coordinates.dart';
+import 'package:fyp_app/static/static_data.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 // import 'package:web_socket_channel/html.dart';

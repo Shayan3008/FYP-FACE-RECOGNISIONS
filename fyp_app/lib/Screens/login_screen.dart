@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_app/Screens/HomeScreen.dart';
-import 'package:fyp_app/Screens/Signup.dart';
-import 'package:fyp_app/models/User.dart';
-import 'package:fyp_app/utility/ValidationChecks.dart';
+// import 'package:fyp_app/Screens/home_screen.dart';
+import 'package:fyp_app/Screens/signup_screen.dart';
+import 'package:fyp_app/models/user.dart';
+import 'package:fyp_app/utility/shared_preference_data.dart';
+import 'package:fyp_app/utility/validation_check.dart';
+
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,12 +18,21 @@ class _LoginScreenState extends State<LoginScreen> {
   bool userValidation = false;
   bool emailValidation = false;
   bool passValidation = false;
+  bool showPass = true;
+  late ValidationChecker checker;
+  late SharedPreferenceData storage;
+  bool loading = false;
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    TextEditingController userName = TextEditingController();
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
+    checker = ValidationChecker();
+    storage = SharedPreferenceData();
+
+    // TextEditingController userName = TextEditingController();
+
     Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -56,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextField(
                             controller: email,
                             decoration: InputDecoration(
-                              labelText: 'email',
+                              labelText: 'Email',
                               errorText: emailValidation == true
                                   ? "Enter Valid Email"
                                   : null,
@@ -64,7 +76,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           TextField(
                             controller: password,
+                            obscureText: showPass,
                             decoration: InputDecoration(
+                              suffixIcon: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    showPass = !showPass;
+                                  });
+                                },
+                                child: showPass
+                                    ? const Icon(
+                                        Icons.remove_red_eye,
+                                      )
+                                    : const Icon(Icons.remove_red_eye_outlined),
+                              ),
                               labelText: 'Password',
                               errorText: passValidation == true
                                   ? "Pass must be greater than 6 characters"
@@ -81,18 +106,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        onPressed: () async => loginMethod(
+                        onPressed: () => loginMethod(
                           email.text,
                           password.text,
                           context,
                         ),
-                        child: const Text(
-                          'LOGIN',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: loading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 1,
+                              )
+                            : const Text(
+                                'LOGIN',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                       ),
                     ),
                     Container(
@@ -118,9 +148,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void loginMethod(String email, String password, BuildContext context) {
+  void loginMethod(String email, String password, BuildContext context) async {
     setState(() {
-      emailValidation = email.isEmpty || !isValidEmail(email);
+      loading = true;
+      emailValidation = email.isEmpty || !checker.isValidEmail(email);
       passValidation = password.length < 6;
     });
     if (emailValidation || passValidation) {
@@ -128,18 +159,44 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           emailValidation = false;
           passValidation = false;
+          loading = false;
         });
       }));
       return;
     }
     User user = User("", email, password);
-    print(user.LoginUser());
-    // Navigator.of(context).pushReplacement(
-    //   MaterialPageRoute(
-    //     builder: (ctx) => HomeScreen(
-    //       user: email,
-    //     ),
-    //   ),
-    // );
+    String name = await user.loginUser(await storage.getCookie());
+    setState(() {
+      loading = false;
+    });
+    if (name.contains('Email') || name.contains('password')) {
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Login Error'),
+            content: Text(name),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (ctx) => HomeScreen(
+            user: name,
+          ),
+        ),
+      );
+    }
   }
 }

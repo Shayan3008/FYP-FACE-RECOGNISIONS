@@ -1,8 +1,7 @@
-// ignore: file_names
 import 'dart:convert';
 import 'dart:math' show cos, sqrt, asin;
 
-import 'package:fyp_app/static/StaticData.dart';
+import 'package:fyp_app/static/static_data.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,20 +29,19 @@ class Coordinates {
     return index;
   }
 
-  static Future<List<Coordinates>> getCameraLocationsFromApis() async {
+  Coordinates fromJson(dynamic list) {
+    return Coordinates(
+        id: list["id"], lat: list["latitude"], long: list["longitude"]);
+  }
+
+  Future<List<Coordinates>> getCameraLocationsFromApis() async {
     List<Coordinates> list1 = [];
     try {
       Response response = await http.get(Uri.parse(
           "${StaticData.httpUrl}${StaticData.portNumber}/apis/coordinates/"));
-      print(response.body);
       List<dynamic> data = json.decode(response.body);
       for (int i = 0; i < data.length; i++) {
-        list1.add(
-          Coordinates(
-              id: data[i]["id"],
-              lat: data[i]["latitude"],
-              long: data[i]["longitude"]),
-        );
+        list1.add(fromJson(data[i]));
       }
       return list1;
     } catch (e) {
