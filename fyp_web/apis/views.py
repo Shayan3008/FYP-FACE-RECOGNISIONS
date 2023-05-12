@@ -1,43 +1,78 @@
 import json
 import os
+from random import randint
 import django
 from django.http import FileResponse, HttpResponse
 from django.shortcuts import render
 from area.models import Area
 from cameras.models import Camera
 from coordinates.models import Coordinates
+from metaData.models import metadata
 from policemans.models import policeman
 from shared.Shared_Methods import Shared_Methods
 from wsgiref.util import FileWrapper
 
-from users.models import Users
+from users.models import ForgotPassword, Users
+
+from django.conf import settings
+from django.core.mail import send_mail
+
 
 # Create your views here.
 
 # Temporary View To check Data in DB and return All Rows in DB
 def GetData(request):
     sharedMethods = Shared_Methods()
+    # metadata1 = metadata(camera_id = Camera.objects.get(id = 1))
+    # metadata1.save()
     # Coordinates.objects.get(id = 4).delete()
-    return HttpResponse(sharedMethods.SendModelDataApiHelper(Camera))
+    return HttpResponse(sharedMethods.SendModelDataApiHelper(Users))
 
+def ChangePass(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        Email = body["email"]
+        user = Users.objects.filter(email=Email)[0]
+        user.password = body["password"]
+        ForgotPassword.objects.filter(userId = user.id).delete()
+        user.save()
+        return HttpResponse('Password Change')
+
+def ForgotPass(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        Email = body["email"]
+        print(Email)
+        code = randint(100000,999999)
+        userId = Users.objects.filter(email=Email)[0].id
+        subject = 'Code  to recover Password' 
+        message = 'This is ur Code for recovering pass:' + str(code)
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = ['k190367@nu.edu.pk', ]
+        send_mail( subject, message, email_from, recipient_list )
+        password = ForgotPassword(userId = userId, resetCode = code)
+        password.save()
+        return HttpResponse('MAIL SENT')
 
 # Api To Add Camera
 def AddCamera(request):
-    DataBody = json.loads(request.body)
+    sharedMethods = Shared_Methods()
     if request.method == "POST":
-        area = Area.objects.get(id = DataBody["AreaId"])
-        coordinate = Coordinates(latitude = DataBody["latitude"],longitude = DataBody["longitude"],area = area)
+        file_name = "/static/CameraVideos/" + request.FILES["file"].name
+        area = Area.objects.get(id = request.POST.get("AreaId"))
+        coordinate = Coordinates(latitude = request.POST.get("latitude"),longitude = request.POST.get("longitude"),area = area)
+        sharedMethods.HandleUploadFile("static/CameraVideos/", request.FILES["file"])
         coordinate.save()
-        camera = Camera(cameraLocation=coordinate)
+        camera = Camera(cameraLocation=coordinate,cameraVideo = file_name)
         camera.save()
         return HttpResponse("Camera And Location Added!!")
     elif request.method == "PUT":
-        camera = Camera.objects.get(id = DataBody["id"])
+        camera = Camera.objects.get(id = request.POST.get("id"))
         coordinate = camera.cameraLocation
-        coordinate.latitude = DataBody["latitude"]
-        coordinate.longitude = DataBody["longitude"]
+        coordinate.latitude = request.POST.get("latitude")
+        coordinate.longitude = request.POST.get("longitude")
         
-        area = Area.objects.get(id = DataBody["AreaId"])
+        area = Area.objects.get(id = request.POST.get("AreaId"))
         coordinate.area = area
         coordinate.save()
         camera.cameraLocation = coordinate
@@ -45,6 +80,7 @@ def AddCamera(request):
         print(camera.cameraLocation.area.Area_name)
         return HttpResponse(camera.cameraLocation.area.Area_name)
     elif request.method == "DELETE":
+        DataBody = json.loads(request.body)
         Camera.objects.get(id = DataBody["CameraId"]).delete()
         return HttpResponse("Camera Deleted")
 
@@ -54,7 +90,7 @@ def AddCamera(request):
 
 def DeleteData(request):
     sharedMethods = Shared_Methods()
-    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(Users))
+    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(ForgotPassword))
 
 # Api to join Data from Camera and Coordinates
 
