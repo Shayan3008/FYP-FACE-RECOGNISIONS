@@ -25,7 +25,7 @@ def GetData(request):
     sharedMethods = Shared_Methods()
     # metadata1 = metadata(camera_id = Camera.objects.get(id = 1))
     # metadata1.save()
-    # Coordinates.objects.get(id = 4).delete()
+    Coordinates.objects.get(id = 4).delete()
     return HttpResponse(sharedMethods.SendModelDataApiHelper(metadata))
 
 
@@ -112,7 +112,7 @@ def AddCamera(request):
 
 def DeleteData(request):
     sharedMethods = Shared_Methods()
-    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(ForgotPassword))
+    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(metadata))
 
 # Api to join Data from Camera and Coordinates
 

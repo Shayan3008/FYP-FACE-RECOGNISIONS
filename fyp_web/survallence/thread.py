@@ -19,7 +19,7 @@ class ModelThread(threading.Thread):
     def run(self):
         # reid = load_model()
         # video_path = main(reid, self.input, self.video_name)
-        video_path = "/static/project.mp4" 
+        video_path = "test6.mp4" 
         camera1 = Camera.objects.get(id = self.cameraId)
         temp = metadata(camera_id = camera1,video_name = video_path)
         temp.save()
