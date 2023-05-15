@@ -34,3 +34,19 @@ def PoliceList(request):
     dataList = list(policeman.objects.values("area_id","email","id"))
     context = {"list": dataList,"list2":Table_Head}
     return render(request, "admin/List/SignupList.html",context=context)
+
+
+def CameraLinks(request):
+    shared = Shared_Methods()
+    Table_Head = shared.GetAllColumnNamesFromTable(Camera)
+    Table_Head.remove("cameraVideo")
+    Table_Head.remove("cameraLocation_id")
+    
+    dataList = list(Camera.objects.values())
+    listOfKeysToBeRemoved = ["cameraVideo","cameraLocation_id"]
+    for i in dataList:
+        i.pop(listOfKeysToBeRemoved[0])
+        i.pop(listOfKeysToBeRemoved[1])
+    context = {"list": dataList,"list2" : Table_Head}
+    print(context)
+    return render(request, "admin/List/CameraLinks.html",context)

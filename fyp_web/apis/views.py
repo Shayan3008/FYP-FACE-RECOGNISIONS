@@ -105,7 +105,8 @@ def getLocationWithCameraId(request):
             "longitude": camera_location.longitude,
             "latitude": camera_location.latitude,
         })
-    return HttpResponse(Data_List)
+    print(Data_List)
+    return HttpResponse(json.dumps(Data_List))
 
 
 # Api to send video to Police men
@@ -177,26 +178,38 @@ def GetCookie(request):
 
 # Api to Link Cameras
 # Body:{
+# mainCamId id for MainCam
 # camId for 1st Camera
-# camLink number 1 or 2 for 1st or 2nd link for first camera
 # camId2 for 2nd Camera
-# camLink2 number 1 or 2 for 1st or 2nd link for second camera
 # }
 def AddCameraLinks(request):
-    data = json.loads(request.body)
-    camera1 = Camera.objects.get(id=data["camId"])
-    camera2 = Camera.objects.get(id=data["camId2"])
-    if data["camLink"] == 1:
-        camera1.cameraClose = camera2
-    else:
-        camera1.cameraClose2 = camera2
-    if data["camLink2"] == 1:
-        camera2.cameraClose = camera1
-    else:
-        camera2.cameraClose2 = camera1
-    camera1.save()
-    camera2.save()
-    return HttpResponse("Camera Links Added!!!!")
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        print(data)
+        print(len(data["camId2"]) > 0)
+        mainCamera = Camera.objects.get(id=data["mainCamId"])
+        if len(data["camId"]) > 0:
+            camera1 = Camera.objects.get(id = data["camId"])
+        if len(data["camId2"]) > 0:
+            camera2 = Camera.objects.get(id=data["camId2"])
+        if len(data["camId"]) > 0:
+            mainCamera.cameraClose = camera1
+            if camera1.cameraClose == None:
+                camera1.cameraClose = mainCamera
+            else:
+                camera1.cameraClose2 = mainCamera
+        if len(data["camId2"]) > 0:
+            mainCamera.cameraClose2 = camera2
+            if camera2.cameraClose == None:
+                camera2.cameraClose = mainCamera
+            else:
+                camera2.cameraClose2 = mainCamera
+        mainCamera.save()
+        if len(data["camId"]) > 0:
+            camera1.save()
+        if len(data["camId2"]) > 0:
+            camera2.save()
+        return HttpResponse("Camera Links Added!!!!")
 
 #Api to AddPolice
 #BODY{
@@ -244,7 +257,9 @@ def GetCameraById(request,id):
         "id":id,
         "long":camera.cameraLocation.longitude,
         "lat":camera.cameraLocation.latitude,
-        "area":camera.cameraLocation.area.id
+        "area":camera.cameraLocation.area.id,
+        "cameraLink":camera.cameraClose,
+        "cameraLink2":camera.cameraClose2
     }
     return HttpResponse(json.dumps(dict1))
 

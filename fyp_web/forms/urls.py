@@ -6,5 +6,6 @@ from forms import views
 urlpatterns = [
     path("AreaForm/",view = views.AreaForm, name="Area Form"),
     path("PoliceForm/", view = views.PoliceForm, name = "Police Form"),
-    path("CameraForm/", view = views.CameraForm, name = "Camera Form")
+    path("CameraForm/", view = views.CameraForm, name = "Camera Form"),
+    path("CameraLinkForm/<int:id>/", view = views.CameraLinkForm, name = "Camera Links")
 ]

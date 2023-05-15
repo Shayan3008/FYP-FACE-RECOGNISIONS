@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{% block DocumentTitle %}{% endblock %} List</title>
+    <title>Camera Links</title>
     <style>
         .sidenav {
             height: 100%;
@@ -183,32 +183,39 @@
 
 
     <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; </span>
-    <h1>{% block Title %}{% endblock %} Details</h1>
+    <h1>Camera Links Details</h1>
     <hr>
     <div class="table">
-        <button class="Add button" type="submit"> <b>+</b> Add New {% block AddTitle %}{% endblock %}</button>
         <table>
             <thead>
                 <tr>
                     <th>#</th>
-                    {% block TableHeads %}
+                    {% for link in list2 %}
+                    <th>{{link}}</th>
 
-                    {% endblock %}
-                    {% comment %}
-                    <th>Address</th>
-                    <th>ID</th> {% endcomment %}
+                    {% endfor %}
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {% block TableBody %}{% endblock %}
-                
+                {% for link in list %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{link.id}}</td>
+                    <td>{{link.cameraClose_id}}</td>
+                    <td>{{link.cameraClose2_id}}</td>
+                    <td>
+                        <button accesskey={{link.id}} class="Update">Update</button>
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
     {% block Script %}
     {% endblock %}
     <script>
+
         function openNav() {
             document.getElementById("mySidenav").style.width = "250px";
         }
@@ -230,6 +237,14 @@
                 }
             });
         }
+        document.querySelectorAll(".Update").forEach(e => {
+            e.addEventListener("click", async (Event) => {
+                const data = await fetch(`http://127.0.0.1:8000/apis/GetCameraById/${Event.target.accessKey}`)
+                const data2 = await data.json()
+                localStorage.setItem("Links", JSON.stringify(data2))
+                window.location = `/Forms/CameraLinkForm/${Event.target.accessKey}`
+            })
+        })
     </script>
 </body>
 
