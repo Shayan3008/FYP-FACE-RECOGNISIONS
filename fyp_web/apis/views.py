@@ -280,10 +280,13 @@ def GetCameraById(request,id):
         "long":camera.cameraLocation.longitude,
         "lat":camera.cameraLocation.latitude,
         "area":camera.cameraLocation.area.id,
-        "cameraLink":camera.cameraClose,
-        "cameraLink2":camera.cameraClose2
+        "cameraLink":camera.cameraClose.id if camera.cameraClose != None else None,
+        "cameraLink2":camera.cameraClose2.id if camera.cameraClose2 != None else None 
     }
-    return HttpResponse(json.dumps(dict1))
+    print(dict1)
+    data = []
+    data.append(dict1)
+    return HttpResponse(json.dumps(data))
 
 
 #text {body}
