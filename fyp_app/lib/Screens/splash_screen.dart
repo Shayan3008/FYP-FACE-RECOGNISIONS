@@ -18,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen>
   ScrollPhysics? physics;
   @override
   void initState() {
+    print('Helo OW');
     _pageController = PageController(initialPage: 0);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
