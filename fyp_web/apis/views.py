@@ -283,7 +283,21 @@ def GetCameraById(request,id):
         "cameraLink":camera.cameraClose.id if camera.cameraClose != None else None,
         "cameraLink2":camera.cameraClose2.id if camera.cameraClose2 != None else None 
     }
-    print(dict1)
+    data = []
+    data.append(dict1)
+    return HttpResponse(json.dumps(data))
+
+def GetCameraByIdForPolice(request,id):
+    camera = Camera.objects.get(id = id)
+    # print(camera.cameraLocation.area.Area_name)
+    dict1 = {
+        "id":id,
+        "long":camera.cameraLocation.longitude,
+        "lat":camera.cameraLocation.latitude,
+        "area":camera.cameraLocation.area.Area_name,
+        "cameraLink":camera.cameraClose.id if camera.cameraClose != None else None,
+        "cameraLink2":camera.cameraClose2.id if camera.cameraClose2 != None else None 
+    }
     data = []
     data.append(dict1)
     return HttpResponse(json.dumps(data))
