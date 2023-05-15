@@ -26,7 +26,12 @@ def GetData(request):
     # metadata1 = metadata(camera_id = Camera.objects.get(id = 1))
     # metadata1.save()
     # Coordinates.objects.get(id = 4).delete()
-    return HttpResponse(sharedMethods.SendModelDataApiHelper(Users))
+    return HttpResponse(sharedMethods.SendModelDataApiHelper(metadata))
+
+
+def GetAlerts(request):
+    sharedMethods = Shared_Methods()
+    return HttpResponse(sharedMethods.SendModelDataApiHelper(metadata))
 
 def ChangePass(request):
     if request.method == "POST":

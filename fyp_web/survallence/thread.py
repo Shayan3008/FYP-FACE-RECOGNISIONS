@@ -4,6 +4,7 @@ import time
 # from models.gait.gait import load_model,main
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from cameras.models import Camera
 
 from metaData.models import metadata
 
@@ -18,9 +19,9 @@ class ModelThread(threading.Thread):
     def run(self):
         # reid = load_model()
         # video_path = main(reid, self.input, self.video_name)
-        random = randint(0,1000)
-        video_path = "/static/video" + str(random)
-        temp = metadata(camera_id = self.cameraId,video_name = video_path)
+        video_path = "/static/test6.mp4" 
+        camera1 = Camera.objects.get(id = self.cameraId)
+        temp = metadata(camera_id = camera1,video_name = video_path)
         temp.save()
         time.sleep(10)
 

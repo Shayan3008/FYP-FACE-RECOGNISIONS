@@ -38,15 +38,15 @@ class CameraConsumer(WebsocketConsumer):
                     "msg": text_data
                 }
             )
-        else:
-            text_data = json.loads(text_data)
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {
-                    "type": "update",
-                    "msg": text_data["message"]
-                }
-            )
+        # else:
+        #     text_data = json.loads(text_data)
+        #     async_to_sync(self.channel_layer.group_send)(
+        #         self.room_group_name,
+        #         {
+        #             "type": "update",
+        #             "msg": text_data["message"]
+        #         }
+        #     )
 
 
     def Alert_Generate(self, event):

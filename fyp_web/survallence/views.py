@@ -34,7 +34,7 @@ def video(request):  # Function to Upload and give video input to Model
     #                   1:], "static/temp/"+request.FILES["vid"].name)
     # return HttpResponse(video_path)
     ModelThread(request.POST.get("input")[
-                      1:], "static/temp/"+request.FILES["vid"].name).start() 
+                      1:], "static/temp/"+request.FILES["vid"].name,request.POST.get("cameraId")).start() 
     return HttpResponse("shayan")
 
 
