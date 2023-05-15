@@ -90,7 +90,7 @@ def AddCamera(request):
 
 def DeleteData(request):
     sharedMethods = Shared_Methods()
-    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(ForgotPassword))
+    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(metadata))
 
 # Api to join Data from Camera and Coordinates
 

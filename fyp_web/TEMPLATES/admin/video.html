@@ -256,6 +256,7 @@
       const file = await getVideoBlob()
       form.append("vid", file)
       form.append("input", localStorage.getItem("input_path1"))
+      form.append("cameraId", document.getElementById("Id").innerText)
       $.ajax(
         {
           url: "/survallence/video/",
