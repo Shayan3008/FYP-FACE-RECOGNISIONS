@@ -33,13 +33,30 @@ def GetAlerts(request):
     sharedMethods = Shared_Methods()
     return HttpResponse(sharedMethods.SendModelDataApiHelper(metadata))
 
+def CheckCode(request):
+    if request.method == "POST":
+        body = json.loads(request.body)
+        Email = body["email"]
+        Code = body["code"]
+        print(Email)
+        user = Users.objects.filter(email=Email)
+        print(user)
+        password = ForgotPassword.objects.filter(userId = user[0].id)[0]
+        if password.resetCode == Code:
+            password.delete()
+            return HttpResponse('Password Change')
+        
+        return HttpResponse("Wrong Code",404)
+        
+        
+
 def ChangePass(request):
     if request.method == "POST":
         body = json.loads(request.body)
         Email = body["email"]
         user = Users.objects.filter(email=Email)[0]
         user.password = body["password"]
-        ForgotPassword.objects.filter(userId = user.id).delete()
+        
         user.save()
         return HttpResponse('Password Change')
 
@@ -95,7 +112,7 @@ def AddCamera(request):
 
 def DeleteData(request):
     sharedMethods = Shared_Methods()
-    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(metadata))
+    return HttpResponse(sharedMethods.DeleteModelDataApiHelper(ForgotPassword))
 
 # Api to join Data from Camera and Coordinates
 
