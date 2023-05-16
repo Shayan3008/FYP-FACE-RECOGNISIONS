@@ -146,6 +146,7 @@
       <a class="content" href="/Listing/Policelisting/">Police</a>
       <a class="content" href="/Listing/Arealisting/">Area</a>
       <a class="content" href="/Listing/Cameralisting/">Camera</a>
+      <a class="content" href="/Listing/Cameralisting/">Camera Links</a>
     </div>
 
   </div>
@@ -160,7 +161,7 @@
 
   <div class="row m-auto mt-4 " style="width:80vw;">
     {% for i in camera %}
-    <div class="col-4 text-center mt-2" id={{i.id}}>
+    <div class="col-4 text-center mt-2">
       <button id={{i.id}} class="btn btn-primary w-50 CameraBtn">Camera
         {{forloop.counter}}</button>
     </div>
@@ -170,12 +171,39 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
+
   <script>
     const buttons = document.querySelectorAll(".CameraBtn")
+    function SetSocketInLocalStorage(id) {
+      let connections = JSON.parse(localStorage.getItem("Socket_Connections"))
+      if (connections == null) {
+        let data = [id]
+        localStorage.setItem("Socket_Connections", JSON.stringify(data))
+      }
+      else {
+
+        connections.push(id)
+        localStorage.setItem("Socket_Connections", JSON.stringify(connections))
+      }
+    }
     window.onload = () => {
       buttons.forEach(e => {
         e.addEventListener("click", (event) => {
+
           window.location = `/survallence/alertvideo/${e.id}/`
+
+          // let connections = JSON.parse(localStorage.getItem("Socket_Connections"))
+          // console.log(connections);
+          // if (connections == null){
+          //   localStorage.setItem("Socket_Connections",JSON.stringify([e.id]))
+          // }
+          // else{
+          //   console.log(connections.length());
+          //   connections.push(e.id)
+          //   localStorage.setItem("Socket_Connections",connections)
+          // }
+
+
         })
       })
     }
@@ -201,7 +229,25 @@
       });
     }
   </script>
+  <script>
+    const socket = new WebSocket("ws://127.0.0.1:8000/ws/admin")
+    // const videos = document.querySelector(".videoPanel")
+    // const file = document.querySelector(".file")
+    // const hidden = document.querySelector(".hidden")
+    socket.onmessage = (event) => {
+      // console.log(event)
+      event_obj = JSON.parse(event.data)
+      console.log(event_obj);
+      if (event_obj.type === "Alert") {
+        id = event_obj.msg.toString()
+        let cameraButton = document.getElementById(`${id}`)
+        cameraButton.style.border = "4px solid red"
+        SetSocketInLocalStorage(id)
+      }
 
+
+    }
+  </script>
 </body>
 
 </html>

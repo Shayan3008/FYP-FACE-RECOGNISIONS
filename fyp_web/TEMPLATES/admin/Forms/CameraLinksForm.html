@@ -1,0 +1,108 @@
+{% extends 'admin/Forms/base.html' %}
+{% block webtitle %}CameraLinks Form{% endblock %}
+{% block MainTitle %}CameraLinks Form{% endblock %}
+{% block inputs %}
+
+<form class="form" enctype="multipart/form-data">
+    <label for="area-name">CameraLink 1</label>
+    <select id="area-Select" name="area-name" value=4>
+        {% for link in list %}
+        <option class="option" value={{link.id}}>Camera {{link.id}}</option>
+        {% endfor %}
+
+    </select>
+    <label for="area-name">CameraLink 2</label>
+    <select id="area-Select2" name="area-name" value=4>
+        {% for link in list %}
+        <option class="option2" value={{link.id}}>Camera {{link.id}}</option>
+        {% endfor %}
+
+    </select>
+
+    <input class="submitbtn" style="margin-top: 15px;" type="button" value="Update">
+</form>
+{% endblock %}
+
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    let obj = null
+    let areaSelect = document.getElementById("area-Select")
+    let areaSelect2 = document.getElementById("area-Select2")
+    let submitButton = document.querySelector(".submitbtn")
+    let options = document.querySelectorAll(".option")
+    let options2 = document.querySelectorAll(".option2")
+    window.onload = () => {
+        obj = JSON.parse(localStorage.getItem("Links"))
+        options.forEach(event => {
+            if (obj.cameraLink === null) {
+                areaSelect.value = null
+                return
+            }
+            if (event.value === obj.cameraLink) {
+                event.selected = true
+            }
+        })
+        options2.forEach(event => {
+            if (obj.cameraLink2 === null) {
+                areaSelect2.value = null
+                return
+            }
+            if (event.value === obj.cameraLink2)
+                event.selected = true
+        })
+    }
+    // let latitude = 
+
+
+
+    // Helper Function Which Adds Data For update in input fields
+    const insertUpdateData = (obj) => {
+        longitudeInput.value = obj.long
+        latitudeInput.value = obj.lat
+        document.querySelectorAll(".option").forEach(e => {
+            console.log(e.value + obj.area)
+            if (e.value == obj.area)
+                e.selected = true
+        })
+    }
+
+    // Func to clear fields
+    const ClearFields = () => {
+        areaSelect.value = ""
+        areaSelect2.value = ""
+        localStorage.removeItem("Links")
+    }
+
+    submitButton.addEventListener("click", () => {
+        if (areaSelect.value.length <= 0 && areaSelect2.value.length <= 0) {
+            alert("Select Atleast 1 field")
+            return
+        }
+
+        UpdateLinks()
+        ClearFields()
+    })
+
+
+
+    const UpdateLinks = async () => {
+        const data = await fetch("http://127.0.0.1:8000/apis/AddCameraLinks/", {
+            method: "PUT",
+            body: JSON.stringify({
+                "mainCamId":obj.id,
+                "camId":areaSelect.value,
+                "camId2":areaSelect2.value,
+            })
+        })
+        if (data.status === 200) {
+            ClearFields()
+            window.location = "/Listing/Cameralisting"
+        }
+    }
+    areaSelect.onchange = (e) => {
+        console.log(e.target.value)
+    }
+
+</script>
+{% endblock %}

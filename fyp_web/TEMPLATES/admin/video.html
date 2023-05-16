@@ -186,13 +186,23 @@
 
   </div>
   <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; </span>
-  <h1 class="text-center">Camera ID: {{camera.id}}</h1>
-  <video class="d-flex p-4 m-auto" src={{camera.cameraVideo}} controls></video>
-  <div class="container text-center hidden mt-3">
+  <h1 class="text-center">Camera ID: <span id="Id">{{camera.id}}</span></h1>
+  <video class="d-flex p-4 m-auto videoInput" src={{camera.cameraVideo}} controls></video>
+  <div class="container text-center input1  mt-3" style="display: none;">
     <input type="file" class="file" name="file" />
     <button class="btn btn-primary click">Submit</button>
   </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
+    let file = document.querySelector(".file")
+    let video = document.querySelector(".videoInput")
+    window.onload = () => {
+      let connections = JSON.parse(localStorage.getItem("Socket_Connections"))
+      console.log(connections.includes(document.getElementById("Id").innerText))
+      if (connections.includes(document.getElementById("Id").innerText)) {
+        document.querySelector(".input1").style.display = "block"
+      }
+    }
     function openNav() {
       document.getElementById("mySidenav").style.width = "250px";
     }
@@ -213,6 +223,71 @@
           dropdownContent.style.display = "block";
         }
       });
+    }
+
+    document.querySelector(".click").onclick = async (e) => { //Send Input Image to Server
+      if (file.files.length > 0) {
+        const form = new FormData()
+        form.append("input", file.files[0])
+        console.log('File Sent')
+        $.ajax(
+          {
+            url: "/survallence/image/",
+            type: "POST",
+            data: form,
+            contentType: false,
+            processData: false,
+            success: (getData) => {
+              localStorage.setItem("input_path1", getData)
+              // videos.style.display = "flex"
+              // hidden.style.display = "none"
+              sendVideoFromCamera("")
+            }
+          });
+
+      }
+      else {
+        alert("Please Enter image Input")
+      }
+    }
+
+    const sendVideoFromCamera = async (camera) => {
+      const form = new FormData()
+      const file = await getVideoBlob()
+      form.append("vid", file)
+      form.append("input", localStorage.getItem("input_path1"))
+      form.append("cameraId", document.getElementById("Id").innerText)
+      $.ajax(
+        {
+          url: "/survallence/video/",
+          type: "POST",
+          data: form,
+          contentType: false,
+          processData: false,
+          success: function (getData) {
+            console.log(getData)
+            let connections = JSON.parse(localStorage.getItem("Socket_Connections"))
+            let index = connections.indexOf(document.getElementById("Id").innerText)
+            if (index != -1) {
+              connections.splice(index, 1)
+              if (connections.length === 0) {
+                localStorage.removeItem("Socket_Connections")
+              }
+              else {
+                localStorage.setItem(
+                  "Socket_Connections", connections
+                )
+              }
+            }
+            window.location = "/survallence/"
+          }
+        });
+    }
+
+    const getVideoBlob = async () => {
+      const response = await fetch(video.src)
+      const blob = await response.blob()
+      return new File([blob], "video1.mp4", { type: "video/mp4" })
     }
   </script>
 </body>

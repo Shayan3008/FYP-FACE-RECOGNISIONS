@@ -94,7 +94,6 @@ def main(reid, inputImageFileName, inputVideoFileName):
                 image.save('INPUT.jpg')
                 temp2.append(np.array(image))
                 bounding_box.append((x, y, w, h))
-            print(len(temp2))
             if len(temp2) > 0:
 
                 # print(temp2)

@@ -19,7 +19,8 @@ from listings import views
 urlpatterns = [
     path("Cameralisting/",view = views.cameraList, name="Camera List"),
     path("Arealisting/",view = views.AreaList, name="Area List"),
-    path("Policelisting/",view = views.PoliceList,name = "Police List")
+    path("Policelisting/",view = views.PoliceList,name = "Police List"),
+    path("CameraLinks/",view = views.CameraLinks,name = "Police List")
 ]
 
 # http://127.0.0.1:8000/apis/SendVideo/

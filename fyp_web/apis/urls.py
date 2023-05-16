@@ -32,7 +32,10 @@ urlpatterns = [
     path("AddArea/",view=views.AddArea,name="Add Area"),
     path("GetCameraById/<int:id>",view=views.GetCameraById,name = "Get Camera By Id"),
     path("SendMail/",view=views.ForgotPass,name = "Forgot Pass"),
-    path("ChangePass/",view=views.ChangePass,name = "Change Pass")
+    path("ChangePass/",view=views.ChangePass,name = "Change Pass"),
+    path("CheckCode/",view=views.CheckCode,name = "Check Code"),
+    path("GetAlerts/",view = views.GetAlerts, name = "Getting Alerts"),
+    path("GetCameraByIdForPolice/<int:id>",view=views.GetCameraByIdForPolice,name = "Get Camera By Id For Police"),
 ]
 
 # http://127.0.0.1:8000/apis/SendVideo/
