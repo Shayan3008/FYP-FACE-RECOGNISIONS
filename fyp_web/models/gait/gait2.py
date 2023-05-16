@@ -5,15 +5,72 @@ from imutils.object_detection import non_max_suppression  # Handle overlapping
 from PIL import Image
 from models.gait.reid import REID
 from models.face.face import Face
-# print(os.getcwd())
+import os
+import imutils
 min_dist_gait = 10000
-# from PIL import Image
 threshold_gait = 10000
-# from ipynb.fs.full.main import extract_features
-
+NMS_THRESHOLD=0.3
+MIN_CONFIDENCE=0.2
 min_dist_face = 10000
 threshold_face = 10000
+labelsPath = "./models/gait/coco.names"
+LABELS = open(labelsPath).read().strip().split("\n")
+weights_path = "yolov4-tiny.weights"
+config_path = "yolov4-tiny.cfg"
+layer_name = model.getLayerNames()
+layer_name = [layer_name[i[0] - 1] for i in model.getUnconnectedOutLayers()]
+cap = cv2.VideoCapture("streetup.mp4")
+writer = None
 
+def pedestrian_detection(image, model, layer_name, personidz=0):
+	(H, W) = image.shape[:2]
+	results = []
+
+
+	blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
+		swapRB=True, crop=False)
+	model.setInput(blob)
+	layerOutputs = model.forward(layer_name)
+
+	boxes = []
+	centroids = []
+	confidences = []
+
+	for output in layerOutputs:
+		for detection in output:
+
+			scores = detection[5:]
+			classID = np.argmax(scores)
+			confidence = scores[classID]
+
+			if classID == personidz and confidence > MIN_CONFIDENCE:
+
+				box = detection[0:4] * np.array([W, H, W, H])
+				(centerX, centerY, width, height) = box.astype("int")
+
+				x = int(centerX - (width / 2))
+				y = int(centerY - (height / 2))
+
+				boxes.append([x, y, int(width), int(height)])
+				centroids.append((centerX, centerY))
+				confidences.append(float(confidence))
+	# apply non-maxima suppression to suppress weak, overlapping
+	# bounding boxes
+	idzs = cv2.dnn.NMSBoxes(boxes, confidences, MIN_CONFIDENCE, NMS_THRESHOLD)
+	# ensure at least one detection exists
+	if len(idzs) > 0:
+		# loop over the indexes we are keeping
+		for i in idzs.flatten():
+			# extract the bounding box coordinates
+			(x, y) = (boxes[i][0], boxes[i][1])
+			(w, h) = (boxes[i][2], boxes[i][3])
+			# update our results list to consist of the person
+			# prediction probability, bounding box coordinates,
+			# and the centroid
+			res = (confidences[i], (x, y, x + w, y + h), centroids[i])
+			results.append(res)
+	# return the list of results
+	return results
 
 def calculate_distance(source, target):
     # print(target.sum())
@@ -48,21 +105,7 @@ def main(reid, inputImageFileName, inputVideoFileName):
     temp = extract_features(reid, image)[0]
     src = temp.data.cpu().numpy()
 
-# Create a HOGDescriptor object
-    hog = cv2.HOGDescriptor()
 
-    # Initialize the People Detector
-    hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
-
-    # Load a video
-    cap = cv2.VideoCapture(inputVideoFileName)
-
-    # Create a VideoWriter object so we can save the video output
-    # fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    # result = cv2.VideoWriter(output_filename,
-    #                          fourcc,
-    #                          output_frames_per_second,
-    #                          file_size)
 
     # Process the video
     while cap.isOpened():
@@ -80,26 +123,31 @@ def main(reid, inputImageFileName, inputVideoFileName):
 
             # Store the original frame
             orig_frame = frame.copy()
-
-            (bounding_boxes, weights) = hog.detectMultiScale(frame,
-                                                             winStride=(
-                                                                 16, 16),
-                                                             padding=(4, 4),
-                                                             scale=1.05)
+            image = imutils.resize(image, width=700)
+            results = pedestrian_detection(image, model, layer_name,
+            personidz=LABELS.index("person"))
             temp2 = []
             bounding_box = []
+            for res in results:
+		        x = res[1][0]
+                y = res[1][1]
+                w = res[1][2]
+                h = res[1][3]
+                ROI = orig_frame(y:h,x:w)
+                temp2.append(np.array(ROI))
+                bounding_boxes.append(res[1])
             # Draw bounding boxes on the framepixels
-            for (x, y, w, h) in bounding_boxes:
+            # for (x, y, w, h) in bounding_boxes:
 
-                x, y = abs(x), abs(y)
-                x2, y2 = x+w, y+h
-                image = Image.fromarray(frame)
-                image.crop((x,y,x2,y2))
-                print('HELLO WORLD')
-                image = image.resize((160, 160))
-                image.save('image1.jpg')
-                temp2.append(np.array(image))
-                bounding_box.append((x, y, w, h))
+            #     x, y = abs(x), abs(y)
+            #     x2, y2 = x+w, y+h
+            #     image = Image.fromarray(frame)
+            #     image.crop((x,y,x2,y2))
+            #     print('HELLO WORLD')
+            #     image = image.resize((160, 160))
+            #     image.save('image1.jpg')
+            #     temp2.append(np.array(image))
+            #     bounding_box.append((x, y, w, h))
             # print(len(temp2))
             if len(temp2) > 0:
 
@@ -109,9 +157,9 @@ def main(reid, inputImageFileName, inputVideoFileName):
                 selected_index = -1
                 min_distance = 10000
                 for i in range(len(dest)):
-                    face_embedding = faceModel.embedding_extractor(
-                        temp2[i], faceModel.model)
-                    if face_embedding != 0:
+                    # face_embedding = faceModel.embedding_extractor(
+                    #     temp2[i], faceModel.model)
+                    if True:
                         dist = calculate_distance(
                             src, dest[i].data.cpu().numpy())
                         # print(dist)
@@ -132,11 +180,11 @@ def main(reid, inputImageFileName, inputVideoFileName):
                 cv2.rectangle(frame,
                               (bounding_box[selected_index][0],
                                bounding_box[selected_index][1]),
-                              (bounding_box[selected_index][0] + bounding_box[selected_index][2],
-                                  bounding_box[selected_index][1] + bounding_box[selected_index][3]),
+                              (bounding_box[selected_index][2],
+                                  bounding_box[selected_index][3]),
                               (0, 0, 255),
                               2)
-            image = cv2.resize(frame, (1280, 720))
+            # image = cv2.resize(frame, (1280, 720))
 
             result.write(image)
         else:

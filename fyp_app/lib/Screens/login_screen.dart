@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_app/Screens/email_verification.dart';
+import 'package:fyp_app/Screens/navigation_animation.dart';
 // import 'package:fyp_app/Screens/home_screen.dart';
 import 'package:fyp_app/Screens/signup_screen.dart';
 import 'package:fyp_app/models/user.dart';
@@ -137,6 +139,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: const Text('No Account Signup!!'),
                       ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => const EmailVerification(),
+                            ),
+                          );
+                        },
+                        child: const Text('Forgot Password'),
+                      ),
                     )
                   ],
                 ),
@@ -192,8 +207,10 @@ class _LoginScreenState extends State<LoginScreen> {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (ctx) => HomeScreen(
-            user: name,
+          builder: (ctx) => NavbarAnimation(
+            child: HomeScreen(
+              user: name,
+            ),
           ),
         ),
       );

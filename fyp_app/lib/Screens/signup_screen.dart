@@ -138,17 +138,8 @@ class _SIGNUPScreenState extends State<SIGNUPScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       onPressed: () async => {
-                        // signUpMethod(
-                        //     userName.text, email.text, password.text, context)
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (ctx) => const NavbarAnimation(
-                              child: HomeScreen(
-                                user: 'UI TESTING',
-                              ),
-                            ),
-                          ),
-                        ),
+                        signUpMethod(
+                            userName.text, email.text, password.text, context)
                       },
                       child: const Text(
                         'SIGNUP',
@@ -209,8 +200,10 @@ class _SIGNUPScreenState extends State<SIGNUPScreen> {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (ctx) => HomeScreen(
-            user: userName,
+          builder: (ctx) => const NavbarAnimation(
+            child: HomeScreen(
+              user: 'UI TESTING',
+            ),
           ),
         ),
       );

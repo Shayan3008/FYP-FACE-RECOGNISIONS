@@ -3,7 +3,7 @@ from area.models import Area
 from cameras.models import Camera
 # from models.face.face import Face
 # from models.gait.gait import load_model
-# from models.gait.gait import main
+from models.gait.gait import main
 import json
 import os
 from policemans.models import policeman
@@ -11,6 +11,10 @@ from policemans.models import policeman
 from shared.Shared_Methods import Shared_Methods
 from survallence.thread import ModelThread
 # Create your views here.
+
+
+# def Test(request):
+
 
 
 def index(request):  # Main WebPage Url
@@ -30,11 +34,11 @@ def video(request):  # Function to Upload and give video input to Model
     # input_embedding = face.embedding_extractor(face.inputImage, face.model)
     # video_path = face.play_video(
     #     "static/temp/"+request.FILES["vid"].name, input_embedding)
-    # video_path = main(reid, request.POST.get("input")[
-    #                   1:], "static/temp/"+request.FILES["vid"].name)
+    video_path = main(reid, request.POST.get("input")[
+                      1:], "static/temp/"+request.FILES["vid"].name)
     # return HttpResponse(video_path)
-    ModelThread(request.POST.get("input")[
-                      1:], "static/temp/"+request.FILES["vid"].name).start() 
+    # ModelThread(request.POST.get("input")[
+    #                   1:], "static/temp/"+request.FILES["vid"].name).start() 
     return HttpResponse("shayan")
 
 

@@ -17,21 +17,23 @@ class SocketClass implements SocketInterface {
       socket = WebSocketChannel.connect(Uri.parse(
           "${StaticData.socketUrl}${StaticData.portNumber}/ws/admin"));
       socket!.stream.listen((event) {
-        print(event);
+        // print(event);
       });
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
   @override
   void sendSocketMessage(Coordinates coordinates) {
-    connect();
-    socket!.sink.add(jsonEncode(<String, dynamic>{
+    Map<String, dynamic> map = {
       "id": coordinates.id,
       "latitude": coordinates.lat,
       "longitude": coordinates.long
-    }));
+    };
+    print("latitude" + json.encode(map));
+    connect();
+    socket!.sink.add(json.encode(map));
   }
 
   @override

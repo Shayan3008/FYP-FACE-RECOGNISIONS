@@ -1,6 +1,7 @@
 import 'dart:math' show pi;
 
 import 'package:flutter/material.dart';
+import 'package:fyp_app/Screens/user_details.dart';
 import 'package:fyp_app/configs/size_config.dart';
 
 class NavbarAnimation extends StatefulWidget {
@@ -20,6 +21,12 @@ class _NavbarAnimationState extends State<NavbarAnimation>
 
   late AnimationController _xControllerForDrawer;
   late Animation<double> _yRotationAnimationForDrawer;
+  @override
+  void dispose() {
+    _xControllerForChild.dispose();
+    _xControllerForDrawer.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -54,6 +61,10 @@ class _NavbarAnimationState extends State<NavbarAnimation>
       ]),
       builder: (context, child) {
         return GestureDetector(
+          onTap: () {
+            _xControllerForChild.forward();
+            _xControllerForDrawer.forward();
+          },
           onHorizontalDragUpdate: (DragUpdateDetails details) {
             final delta = details.delta.dx / SizeConfig.screenWidth! * 0.8;
             _xControllerForChild.value += delta;
@@ -82,6 +93,19 @@ class _NavbarAnimationState extends State<NavbarAnimation>
               children: [
                 Container(
                   color: Colors.grey,
+                  child: Align(
+                      alignment: Alignment.topRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          _xControllerForChild.reverse();
+                          _xControllerForDrawer.reverse();
+                        },
+                        child: const Icon(
+                          Icons.cancel,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      )),
                 ),
                 Transform(
                   alignment: Alignment.centerLeft,
@@ -122,13 +146,29 @@ class _NavbarAnimationState extends State<NavbarAnimation>
                               SizedBox(
                                 height: SizeConfig.screenHeight! * 0.05,
                               ),
-                              const Text(
-                                'Details',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
+                              InkWell(
+                                onTap: () => {
+                                  _xControllerForChild.reset(),
+                                  _xControllerForDrawer.reset(),
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NavbarAnimation(
+                                        child: UserDetails(
+                                            userName: "Shayan",
+                                            email: "shayanjawed4@gmail.com"),
+                                      ),
+                                    ),
+                                  )
+                                },
+                                child: const Text(
+                                  'Details',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ],
                           ),

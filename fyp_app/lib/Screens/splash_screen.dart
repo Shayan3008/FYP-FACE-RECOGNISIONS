@@ -48,14 +48,46 @@ class _SplashScreenState extends State<SplashScreen>
           children: [
             Stack(
               children: [
-                Container(
-                  color: Colors.red,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                          bottom: 150, left: SizeConfig.screenWidth! / 4.5),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Swipe to Login",
+                            style: TextStyle(
+                              fontSize: SizeConfig.horizantalAspect! * 8,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Image.asset('assets/arrow.gif')
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 ClipPath(
                   clipper: Clipper(),
                   child: Container(
                     height: SizeConfig.screenHeight! * 0.5,
-                    color: Colors.blue,
+                    color: const Color.fromARGB(255, 123, 196, 255),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                            child: Text(
+                          "Welcome to Vigilant Watcher",
+                          style: TextStyle(
+                            fontSize: SizeConfig.horizantalAspect! * 8.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        )),
+                      ],
+                    ),
                   ),
                 )
               ],

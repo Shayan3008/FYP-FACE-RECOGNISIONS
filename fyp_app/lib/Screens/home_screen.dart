@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final _location = Location();
   PermissionStatus? permissionStatus;
   LocationData? locationData;
+  bool _sendingData = false;
 
   @override
   void initState() {
@@ -78,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         leading: const InkWell(
-          child:  Icon(
+          child: Icon(
             Icons.vertical_split,
           ),
         ),
@@ -87,24 +88,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       body: SafeArea(
           child: Center(
-        child: GestureDetector(
-          onTap: (() async => {
-                // await openGoogleLocation(),
-                // socket!.printSocketName(),
-                await openGoogleLocation(),
-              }),
-          child: const CircleAvatar(
-            radius: 120,
-            backgroundColor: Colors.red,
-            child: Text(
-              'Generate Alert',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+        child: _sendingData
+            ? const CircularProgressIndicator()
+            : GestureDetector(
+                onTap: (() async => {
+                      // await openGoogleLocation(),
+                      // socket!.printSocketName(),
+                      setState(() {
+                        _sendingData = true;
+                      }),
+                      await openGoogleLocation(),
+                      setState(() {
+                        _sendingData = false;
+                      }),
+                    }),
+                child: const CircleAvatar(
+                  radius: 120,
+                  backgroundColor: Colors.red,
+                  child: Text(
+                    'Generate Alert',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
       )),
     );
   }
