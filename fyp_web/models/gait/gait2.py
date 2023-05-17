@@ -10,6 +10,7 @@ import os
 import imutils
 
 
+
 def pedestrian_detection(image, model, layer_name, personidz,MIN_CONFIDENCE,NMS_THRESHOLD):
 	(H, W) = image.shape[:2]
 	results = []
@@ -26,7 +27,6 @@ def pedestrian_detection(image, model, layer_name, personidz,MIN_CONFIDENCE,NMS_
 	model.setInput(blob)
 	print(layer_name)
 	layerOutputs = model.forward(layer_name)
-	print("This is layer outputs",layerOutputs)
 	boxes = []
 	centroids = []
 	confidences = []
@@ -74,7 +74,8 @@ def calculate_distance(source, target):
     # print(target.sum())
     difference = abs(source-target)
     # print(difference.sum())
-    return (pow((difference.sum())/745, 1))
+    print(difference.sum()/200)
+    return (difference.sum())/200
 
 
 def load_model():
@@ -88,6 +89,7 @@ def extract_features(reid, input):
 
 
 def main(reid, inputImageFileName, inputVideoFileName):
+    i = 0
     NMS_THRESHOLD=0.3
     MIN_CONFIDENCE=0.2
     labelsPath = "./models/gait/coco.names"
@@ -102,7 +104,7 @@ def main(reid, inputImageFileName, inputVideoFileName):
     # cap = cv2.VideoCapture("./static/CameraVideos/test8.mp4")
     # writer = None
 
-            
+    min_dist_gait = 1000
     # faceModel = Face()
     cap = cv2.VideoCapture(inputVideoFileName)
     file_size = (1920, 1080)
@@ -121,73 +123,87 @@ def main(reid, inputImageFileName, inputVideoFileName):
     src = temp.data.cpu().numpy()
 
 
-
     # Process the video
     while cap.isOpened():
-
+        
         # Capture one frame at a time
         success, frame = cap.read()
 
         # Do we have a video frame? If true, proceed.
         if success:
-
+            if i == 2:
+                i = 0
+            else:
             # Resize the frame
-            width = int(frame.shape[1] * scale_ratio)
-            height = int(frame.shape[0] * scale_ratio)
-            frame = cv2.resize(frame, (width, height))
+                width = int(frame.shape[1] * scale_ratio)
+                height = int(frame.shape[0] * scale_ratio)
+                frame = cv2.resize(frame, (width, height))
 
-            # Store the original frame
-            orig_frame = frame.copy()
-            image = imutils.resize(frame, width=700)
-            results = pedestrian_detection(frame, model, layer_name,
-            LABELS.index("person"),MIN_CONFIDENCE,NMS_THRESHOLD)
-            temp2 = []
-            bounding_box = []
-            for res in results:
-                x = res[1][0]
-                y = res[1][1]
-                w = res[1][2]
-                h = res[1][3]
-                ROI = orig_frame[y:h,x:w]
-                temp2.append(ROI)
-                bounding_box.append(res[1])
-            if len(temp2) > 0:
+                # Store the original frame
+                orig_frame = frame.copy()
+                # image = imutils.resize(frame, width=700)
+                results = pedestrian_detection(frame, model, layer_name,
+                LABELS.index("person"),MIN_CONFIDENCE,NMS_THRESHOLD)
+                temp2 = []
+                bounding_box = []
+                for res in results:
+                    x = res[1][0]
+                    y = res[1][1]
+                    w = res[1][2]
+                    h = res[1][3]
+                    image_width = orig_frame.shape[1]
+                    image_height = orig_frame.shape[0]
+                    if w > image_width:
+                         w = w - x
+                    if h > image_height:
+                         h = h - y
+                    ROI = orig_frame[y:h,x:w]
+                    temp2.append(ROI)
+                    bounding_box.append(res[1])
+                if len(temp2) > 0:
+                    print("THIS IS DIMENSIONS:"+str(x)+" "+str(y)+" "+str(w)+" "+str(h))
+                    dest = extract_features(reid, temp2)
+                    selected_index = -1
+                    min_distance = 10000
+                    min1 = 1000
+                    for i in range(len(dest)):
+                        
+                        if True:
+                            
+                            dist = calculate_distance(
+                                src, dest[i].data.cpu().numpy())
+                            if dist < min1 :
+                                selected_index = i
+                                min1 = dist
+                        
+                        else:
+                            difference = faceModel.difference_image(
+                                faceInputEmbedding, face_embedding)
+                            if difference < min_dist_face and difference < threshold_face:
+                                threshold_face = difference
+                                selected_index = i
+                                min_dist_face = dist
 
-                dest = extract_features(reid, temp2)
-                selected_index = -1
-                min_distance = 10000
-                for i in range(len(dest)):
+                    print('Selected Index: ', selected_index)
                     
-                    if True:
-                        dist = calculate_distance(
-                            src, dest[i].data.cpu().numpy())
-                        if dist < min_dist_gait and dist < threshold_gait:
-                            threshold_gait = dist
-                            selected_index = i
-                            min_dist_gait = dist
-                    else:
-                        difference = faceModel.difference_image(
-                            faceInputEmbedding, face_embedding)
-                        if difference < min_dist_face and difference < threshold_face:
-                            threshold_face = difference
-                            selected_index = i
-                            min_dist_face = dist
-
-                print('Selected Index: ', selected_index)
+                    cv2.rectangle(frame,
+                                (bounding_box[selected_index][0],
+                                bounding_box[selected_index][1]),
+                                (bounding_box[selected_index][2],
+                                    bounding_box[selected_index][3]),
+                                (0, 0, 255),
+                                2)
                 
-                cv2.rectangle(frame,
-                              (bounding_box[selected_index][0],
-                               bounding_box[selected_index][1]),
-                              (bounding_box[selected_index][2],
-                                  bounding_box[selected_index][3]),
-                              (0, 0, 255),
-                              2)
-            # image = cv2.resize(frame, (1280, 720))
-
-            result.write(image)
+                image.append(frame)
+              
+                # result.write(image)
+                i = i + 1
         else:
             break
-
+        
+    for i in range(len(image)):
+        result.write(frame)
+         
     # Stop when the video is finished
     cap.release()
 

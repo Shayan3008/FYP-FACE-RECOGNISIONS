@@ -300,6 +300,14 @@ def GetCameraByIdForPolice(request,id):
     data.append(dict1)
     return HttpResponse(json.dumps(data))
 
-
+def getPoliceByEmail(request):
+    requestData = json.loads(request.body)
+    police = policeman.objects.filter(email = requestData["email"])
+    if len(police) > 0:
+        return HttpResponse(json.dumps({
+            "area":police[0].area.Area_name,
+            "email": police[0].email
+        }))
+    return HttpResponse("Email Not Found",404)
 #text {body}
 #file {pdf,doc,video,audio,image} blob

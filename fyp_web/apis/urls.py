@@ -35,6 +35,7 @@ urlpatterns = [
     path("ChangePass/",view=views.ChangePass,name = "Change Pass"),
     path("CheckCode/",view=views.CheckCode,name = "Check Code"),
     path("GetAlerts/",view = views.GetAlerts, name = "Getting Alerts"),
+    path("GetPoliceByEmail/",view = views.getPoliceByEmail, name = "Getting Policeman by email"),
     path("GetCameraByIdForPolice/<int:id>",view=views.GetCameraByIdForPolice,name = "Get Camera By Id For Police"),
 ]
 
