@@ -24,6 +24,6 @@ urlpatterns = [
     path("face/", view=views.face, name="input"),
     path("cookie/",view = views.cookie, name = "csrftoken"),
     path("alertvideo/<int:id>/", view = views.alertVideo, name = "Alert Video")
-    path("test/", view=views.Test, name="Test Model"),
+    # path("test/", view=views.Test, name="Test Model"),
     # path("coordinates/", view=views.GetCoordinates, name="Get Coordinates")
 ]

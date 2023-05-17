@@ -207,8 +207,6 @@ def GetCookie(request):
 def AddCameraLinks(request):
     if request.method == "PUT":
         data = json.loads(request.body)
-        print(data)
-        print(len(data["camId2"]) > 0)
         mainCamera = Camera.objects.get(id=data["mainCamId"])
         if len(data["camId"]) > 0:
             camera1 = Camera.objects.get(id = data["camId"])

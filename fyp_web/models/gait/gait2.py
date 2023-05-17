@@ -15,11 +15,11 @@ min_dist_face = 10000
 threshold_face = 10000
 labelsPath = "./models/gait/coco.names"
 LABELS = open(labelsPath).read().strip().split("\n")
-weights_path = "yolov4-tiny.weights"
-config_path = "yolov4-tiny.cfg"
+weights_path = "./models/gait/yolov4-tiny.weights"
+config_path = "./models/gait/yolov4-tiny.cfg"
+model = cv2.dnn.readNetFromDarknet(config_path, weights_path)
 layer_name = model.getLayerNames()
-layer_name = [layer_name[i[0] - 1] for i in model.getUnconnectedOutLayers()]
-cap = cv2.VideoCapture("streetup.mp4")
+layer_name = [layer_name[i - 1] for i in model.getUnconnectedOutLayers()]
 writer = None
 
 def pedestrian_detection(image, model, layer_name, personidz=0):
@@ -89,7 +89,8 @@ def extract_features(reid, input):
 
 
 def main(reid, inputImageFileName, inputVideoFileName):
-    faceModel = Face()
+    # faceModel = Face()
+    cap = cv2.VideoCapture(inputVideoFileName)
     file_size = (1920, 1080)
     scale_ratio = 1
     output_filename = 'output9.mp4'
@@ -97,7 +98,7 @@ def main(reid, inputImageFileName, inputVideoFileName):
     fourcc = cv2.VideoWriter_fourcc(*'H264')
     result = cv2.VideoWriter("./static/output9.mp4", fourcc, 30.0, (1280, 720))
     input_image = Image.open(inputImageFileName)
-    faceInputEmbedding = faceModel.embedding_extractor(input_image, faceModel.model)
+    # faceInputEmbedding = faceModel.embedding_extractor(input_image, faceModel.model)
 
     image = []
     image.append(np.array(input_image))
@@ -123,19 +124,21 @@ def main(reid, inputImageFileName, inputVideoFileName):
 
             # Store the original frame
             orig_frame = frame.copy()
-            image = imutils.resize(image, width=700)
-            results = pedestrian_detection(image, model, layer_name,
+            image = imutils.resize(frame, width=700)
+            results = pedestrian_detection(frame, model, layer_name,
             personidz=LABELS.index("person"))
             temp2 = []
             bounding_box = []
             for res in results:
-		        x = res[1][0]
+                x = res[1][0]
                 y = res[1][1]
                 w = res[1][2]
                 h = res[1][3]
-                ROI = orig_frame(y:h,x:w)
+                ROI = orig_frame[y:h,x:w]
+                image = Image.fromarray(ROI)
+                image.show()
                 temp2.append(np.array(ROI))
-                bounding_boxes.append(res[1])
+                bounding_box.append(res[1])
             # Draw bounding boxes on the framepixels
             # for (x, y, w, h) in bounding_boxes:
 
@@ -176,7 +179,7 @@ def main(reid, inputImageFileName, inputVideoFileName):
                             min_dist_face = dist
 
                 print('Selected Index: ', selected_index)
-
+                
                 cv2.rectangle(frame,
                               (bounding_box[selected_index][0],
                                bounding_box[selected_index][1]),

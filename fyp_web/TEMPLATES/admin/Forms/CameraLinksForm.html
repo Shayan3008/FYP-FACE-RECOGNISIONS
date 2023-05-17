@@ -34,6 +34,7 @@
     let options2 = document.querySelectorAll(".option2")
     window.onload = () => {
         obj = JSON.parse(localStorage.getItem("Links"))
+        console.log(obj);
         options.forEach(event => {
             if (obj.cameraLink === null) {
                 areaSelect.value = null
@@ -81,12 +82,12 @@
         }
 
         UpdateLinks()
-        ClearFields()
     })
 
 
 
     const UpdateLinks = async () => {
+        obj = JSON.parse(localStorage.getItem("Links"))
         const data = await fetch("http://127.0.0.1:8000/apis/AddCameraLinks/", {
             method: "PUT",
             body: JSON.stringify({
