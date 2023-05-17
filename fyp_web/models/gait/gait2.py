@@ -5,33 +5,28 @@ from imutils.object_detection import non_max_suppression  # Handle overlapping
 from PIL import Image
 from models.gait.reid import REID
 from models.face.face import Face
+
 import os
 import imutils
-min_dist_gait = 10000
-threshold_gait = 10000
-NMS_THRESHOLD=0.3
-MIN_CONFIDENCE=0.2
-min_dist_face = 10000
-threshold_face = 10000
-labelsPath = "./models/gait/coco.names"
-LABELS = open(labelsPath).read().strip().split("\n")
-weights_path = "./models/gait/yolov4-tiny.weights"
-config_path = "./models/gait/yolov4-tiny.cfg"
-model = cv2.dnn.readNetFromDarknet(config_path, weights_path)
-layer_name = model.getLayerNames()
-layer_name = [layer_name[i - 1] for i in model.getUnconnectedOutLayers()]
-writer = None
 
-def pedestrian_detection(image, model, layer_name, personidz=0):
+
+def pedestrian_detection(image, model, layer_name, personidz,MIN_CONFIDENCE,NMS_THRESHOLD):
 	(H, W) = image.shape[:2]
 	results = []
+	# print(personidz)
+	# print(MIN_CONFIDENCE)
+	# print(NMS_THRESHOLD)
 
-
+    
 	blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
 		swapRB=True, crop=False)
+	# print(layer_name)
+	# print("This is BLOBS",blob)
+	
 	model.setInput(blob)
+	print(layer_name)
 	layerOutputs = model.forward(layer_name)
-
+	print("This is layer outputs",layerOutputs)
 	boxes = []
 	centroids = []
 	confidences = []
@@ -54,9 +49,11 @@ def pedestrian_detection(image, model, layer_name, personidz=0):
 				boxes.append([x, y, int(width), int(height)])
 				centroids.append((centerX, centerY))
 				confidences.append(float(confidence))
+	# print(boxes)
 	# apply non-maxima suppression to suppress weak, overlapping
 	# bounding boxes
 	idzs = cv2.dnn.NMSBoxes(boxes, confidences, MIN_CONFIDENCE, NMS_THRESHOLD)
+	# print("This is the id of YOLO MODEL:",len(idzs))
 	# ensure at least one detection exists
 	if len(idzs) > 0:
 		# loop over the indexes we are keeping
@@ -69,6 +66,7 @@ def pedestrian_detection(image, model, layer_name, personidz=0):
 			# and the centroid
 			res = (confidences[i], (x, y, x + w, y + h), centroids[i])
 			results.append(res)
+            
 	# return the list of results
 	return results
 
@@ -76,7 +74,7 @@ def calculate_distance(source, target):
     # print(target.sum())
     difference = abs(source-target)
     # print(difference.sum())
-    return (pow((difference.sum())/600, 1))
+    return (pow((difference.sum())/745, 1))
 
 
 def load_model():
@@ -88,7 +86,23 @@ def extract_features(reid, input):
     return data
 
 
+
 def main(reid, inputImageFileName, inputVideoFileName):
+    NMS_THRESHOLD=0.3
+    MIN_CONFIDENCE=0.2
+    labelsPath = "./models/gait/coco.names"
+    LABELS = open(labelsPath).read().strip().split("\n")
+    weights_path = "./models/gait/yolov4_tiny.weights"
+    config_path = "./models/gait/yolov4_tiny.cfg"
+    
+
+    model = cv2.dnn.readNetFromDarknet(config_path, weights_path)
+    layer_name = model.getLayerNames()
+    layer_name = [layer_name[i - 1] for i in model.getUnconnectedOutLayers()]
+    # cap = cv2.VideoCapture("./static/CameraVideos/test8.mp4")
+    # writer = None
+
+            
     # faceModel = Face()
     cap = cv2.VideoCapture(inputVideoFileName)
     file_size = (1920, 1080)
@@ -126,7 +140,7 @@ def main(reid, inputImageFileName, inputVideoFileName):
             orig_frame = frame.copy()
             image = imutils.resize(frame, width=700)
             results = pedestrian_detection(frame, model, layer_name,
-            personidz=LABELS.index("person"))
+            LABELS.index("person"),MIN_CONFIDENCE,NMS_THRESHOLD)
             temp2 = []
             bounding_box = []
             for res in results:
@@ -135,37 +149,18 @@ def main(reid, inputImageFileName, inputVideoFileName):
                 w = res[1][2]
                 h = res[1][3]
                 ROI = orig_frame[y:h,x:w]
-                image = Image.fromarray(ROI)
-                image.show()
-                temp2.append(np.array(ROI))
+                temp2.append(ROI)
                 bounding_box.append(res[1])
-            # Draw bounding boxes on the framepixels
-            # for (x, y, w, h) in bounding_boxes:
-
-            #     x, y = abs(x), abs(y)
-            #     x2, y2 = x+w, y+h
-            #     image = Image.fromarray(frame)
-            #     image.crop((x,y,x2,y2))
-            #     print('HELLO WORLD')
-            #     image = image.resize((160, 160))
-            #     image.save('image1.jpg')
-            #     temp2.append(np.array(image))
-            #     bounding_box.append((x, y, w, h))
-            # print(len(temp2))
             if len(temp2) > 0:
 
-                # print(temp2)
                 dest = extract_features(reid, temp2)
-                # print('dest: ', len(dest))
                 selected_index = -1
                 min_distance = 10000
                 for i in range(len(dest)):
-                    # face_embedding = faceModel.embedding_extractor(
-                    #     temp2[i], faceModel.model)
+                    
                     if True:
                         dist = calculate_distance(
                             src, dest[i].data.cpu().numpy())
-                        # print(dist)
                         if dist < min_dist_gait and dist < threshold_gait:
                             threshold_gait = dist
                             selected_index = i
@@ -200,7 +195,7 @@ def main(reid, inputImageFileName, inputVideoFileName):
     result.release()
 
     # Close all windows
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
 
     return '/static/'+output_filename
 

@@ -2,15 +2,21 @@ from django.shortcuts import render, HttpResponse
 from area.models import Area
 from cameras.models import Camera
 # from models.face.face import Face
-from models.gait.gait2 import load_model
-from models.gait.gait2 import main
+from models.gait.gait import load_model
+from models.gait.gait import main
+# import cv2
 import json
 import os
 from policemans.models import policeman
 
 from shared.Shared_Methods import Shared_Methods
 from survallence.thread import ModelThread
+from models.gait.YOLO import play
 # Create your views here.
+
+def Test(request):
+    play()
+    return HttpResponse("YOLO TEST")
 
 
 def index(request):  # Main WebPage Url
